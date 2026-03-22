@@ -1,4 +1,4 @@
-"""Core engines: consciousness, reasoning, memory, world model, prometheus, atlas, aegis, temporal, resilience, quantum, collective, cognitive bus, neuro-symbolic, hallucination shield."""
+"""Core engines: consciousness, reasoning, memory, world model, prometheus, atlas, aegis, temporal, resilience, quantum, collective, cognitive bus, neuro-symbolic, hallucination shield, bio core, prediction engine, auto tool builder."""
 from pradysagican.core.consciousness import ConsciousnessEngine
 from pradysagican.core.reasoning import ReasoningEngine
 from pradysagican.core.memory import MemorySystem
@@ -13,6 +13,9 @@ from pradysagican.core.collective_intelligence import CollectiveIntelligence, Pe
 from pradysagican.core.cognitive_bus import UnifiedCognitiveBus, CognitiveSignal, SignalType, CognitivePipeline, ModuleRegistry
 from pradysagican.core.neuro_symbolic import NeuroSymbolicReasoner, KnowledgeBase, LogicalRule, Fact
 from pradysagican.core.hallucination_shield import HallucinationShield, ConfidenceCalibrator, ClaimVerifier
+from pradysagican.core.bio_core import BioCore, Homeostasis, SelfRepair, Metabolism, EvolutionaryAdaptation
+from pradysagican.core.prediction_engine import PredictionEngine, BayesianPredictor, EnsemblePredictor, EnsembleMethod
+from pradysagican.core.auto_tool_builder import AutoToolBuilder, WebConnector, ToolBlueprint, BuiltTool
 
 __all__ = [
     "ConsciousnessEngine", "ReasoningEngine", "MemorySystem", "WorldModel",
@@ -31,4 +34,10 @@ __all__ = [
     "NeuroSymbolicReasoner", "KnowledgeBase", "LogicalRule", "Fact",
     # Hallucination Shield
     "HallucinationShield", "ConfidenceCalibrator", "ClaimVerifier",
+    # Bio Core
+    "BioCore", "Homeostasis", "SelfRepair", "Metabolism", "EvolutionaryAdaptation",
+    # Prediction Engine
+    "PredictionEngine", "BayesianPredictor", "EnsemblePredictor", "EnsembleMethod",
+    # Auto Tool Builder
+    "AutoToolBuilder", "WebConnector", "ToolBlueprint", "BuiltTool",
 ]

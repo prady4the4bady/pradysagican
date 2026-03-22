@@ -50,5 +50,7 @@ async def test_inventor():
     inv = InventionEngine()
     problems = await inv.identify_problems("AI")
     assert len(problems) > 0
-    hypotheses = await inv.generate_hypotheses(problems[0])
+    # problems returns list of dicts, extract the problem string
+    problem_str = problems[0]["problem"] if isinstance(problems[0], dict) else problems[0]
+    hypotheses = await inv.generate_hypotheses(problem_str)
     assert len(hypotheses) > 0

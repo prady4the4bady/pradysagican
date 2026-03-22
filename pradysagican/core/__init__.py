@@ -1,4 +1,4 @@
-"""Core engines: consciousness, reasoning, memory, world model, prometheus, atlas, aegis, temporal, resilience, quantum, collective, cognitive bus, neuro-symbolic, hallucination shield, bio core, prediction engine, auto tool builder."""
+"""Core engines: consciousness, reasoning, memory, world model, prometheus, atlas, aegis, temporal, resilience, quantum, collective, cognitive bus, neuro-symbolic, hallucination shield, bio core, prediction engine, auto tool builder, feature registry, system manifest."""
 from pradysagican.core.consciousness import ConsciousnessEngine
 from pradysagican.core.reasoning import ReasoningEngine
 from pradysagican.core.memory import MemorySystem
@@ -16,6 +16,8 @@ from pradysagican.core.hallucination_shield import HallucinationShield, Confiden
 from pradysagican.core.bio_core import BioCore, Homeostasis, SelfRepair, Metabolism, EvolutionaryAdaptation
 from pradysagican.core.prediction_engine import PredictionEngine, BayesianPredictor, EnsemblePredictor, EnsembleMethod
 from pradysagican.core.auto_tool_builder import AutoToolBuilder, WebConnector, ToolBlueprint, BuiltTool
+from pradysagican.core.feature_registry import FeatureRegistry, FeatureCategory, Feature
+from pradysagican.core.system_manifest import SystemManifest, ModuleInfo, ConnectionInfo
 
 __all__ = [
     "ConsciousnessEngine", "ReasoningEngine", "MemorySystem", "WorldModel",
@@ -40,4 +42,8 @@ __all__ = [
     "PredictionEngine", "BayesianPredictor", "EnsemblePredictor", "EnsembleMethod",
     # Auto Tool Builder
     "AutoToolBuilder", "WebConnector", "ToolBlueprint", "BuiltTool",
+    # Feature Registry
+    "FeatureRegistry", "FeatureCategory", "Feature",
+    # System Manifest
+    "SystemManifest", "ModuleInfo", "ConnectionInfo",
 ]

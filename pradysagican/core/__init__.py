@@ -1,4 +1,4 @@
-"""Core engines: consciousness, reasoning, memory, world model, prometheus, atlas, aegis, temporal, resilience, quantum, collective, cognitive bus, neuro-symbolic, hallucination shield, bio core, prediction engine, auto tool builder, feature registry, system manifest."""
+"""Core engines: consciousness, reasoning, memory, world model, prometheus, atlas, aegis, temporal, resilience, quantum, collective, cognitive bus, neuro-symbolic, hallucination shield, bio core, prediction engine, auto tool builder, feature registry, system manifest, god powers."""
 from pradysagican.core.consciousness import ConsciousnessEngine
 from pradysagican.core.reasoning import ReasoningEngine
 from pradysagican.core.memory import MemorySystem
@@ -18,6 +18,11 @@ from pradysagican.core.prediction_engine import PredictionEngine, BayesianPredic
 from pradysagican.core.auto_tool_builder import AutoToolBuilder, WebConnector, ToolBlueprint, BuiltTool
 from pradysagican.core.feature_registry import FeatureRegistry, FeatureCategory, Feature
 from pradysagican.core.system_manifest import SystemManifest, ModuleInfo, ConnectionInfo
+from pradysagican.core.god_powers import (
+    DreamEngine, DreamResult, CausalSuperpower, CausalEffect,
+    MetaCognitionV2, MetaCognitiveLayer, MultiScaleAttention,
+    KnowledgeSynthesizer, SynthesizedInsight, MoralCompass, MoralAssessment,
+)
 
 __all__ = [
     "ConsciousnessEngine", "ReasoningEngine", "MemorySystem", "WorldModel",
@@ -46,4 +51,8 @@ __all__ = [
     "FeatureRegistry", "FeatureCategory", "Feature",
     # System Manifest
     "SystemManifest", "ModuleInfo", "ConnectionInfo",
+    # God Powers
+    "DreamEngine", "DreamResult", "CausalSuperpower", "CausalEffect",
+    "MetaCognitionV2", "MetaCognitiveLayer", "MultiScaleAttention",
+    "KnowledgeSynthesizer", "SynthesizedInsight", "MoralCompass", "MoralAssessment",
 ]

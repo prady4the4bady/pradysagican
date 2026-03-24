@@ -1,0 +1,107 @@
+PRADYSAGICAN PROPRIETARY LICENSE v1.0
+=====================================
+
+Copyright (c) 2026 Prady (f20240323@dubai.bits-pilani.ac.in)
+All Rights Reserved.
+
+TERMS AND CONDITIONS
+--------------------
+
+1. DEFINITIONS
+   "Software" means the PRADYSAGICAN system, including all source code,
+   documentation, algorithms, architectures, and associated materials.
+   "License Key" means a valid, paid license issued by the Licensor.
+   "Licensor" means Prady and authorized distributors.
+   "Licensee" means any individual or entity that has purchased a valid License Key.
+
+2. LICENSE GRANT
+   Subject to payment and acceptance of these terms, Licensor grants Licensee
+   a non-exclusive, non-transferable, revocable license to use the Software
+   according to their purchased License Tier:
+
+   TRIAL (Free):
+   - 7-day evaluation period
+   - 100 API calls per day
+   - No modification rights
+   - No redistribution
+
+   PERSONAL ($49/month):
+   - Use the Software for personal projects
+   - 1,000 API calls per day
+   - No modification rights
+   - No redistribution
+
+   PROFESSIONAL ($199/month):
+   - Use the Software for commercial projects
+   - 10,000 API calls per day
+   - No modification rights
+   - No redistribution
+
+   ENTERPRISE ($999/month):
+   - Use the Software for commercial projects
+   - Unlimited API calls
+   - Limited modification with prior written approval
+   - No redistribution
+
+   SOVEREIGN (Government pricing — contact for quote):
+   - Full access including SOVEREIGN mode
+   - Unlimited everything
+   - Modification permitted
+   - Requires multi-party government authorization
+   - Subject to additional national security terms
+
+3. RESTRICTIONS
+   a) Licensee SHALL NOT:
+      - Reverse engineer, decompile, or disassemble the Software
+      - Remove or alter any proprietary notices or labels
+      - Use the Software to train competing AI systems
+      - Share, redistribute, or sublicense without written permission
+      - Modify the Software without ENTERPRISE or SOVEREIGN license
+      - Use automated tools to scrape, copy, or extract source code
+
+   b) VIOLATION CONSEQUENCES:
+      - Immediate license revocation
+      - IP-level access ban from all PRADYSAGICAN repositories
+      - Pursuit of legal remedies for damages
+      - Blacklisting from future license purchases
+
+4. AI SCRAPING PROHIBITION
+   Automated AI training crawlers, bots, and scrapers are EXPRESSLY PROHIBITED
+   from accessing this repository. This includes but is not limited to:
+   GPTBot, ClaudeBot, CCBot, Bytespider, and any similar automated systems.
+   Access for AI training purposes requires a separate DATA LICENSE at
+   additional cost. Contact the Licensor for data licensing terms.
+
+5. PAYMENT
+   License fees are non-refundable. Failure to maintain payment results in
+   automatic license expiration. The Software will cease to function without
+   a valid license key after the trial period.
+
+6. INTELLECTUAL PROPERTY
+   The Software, including all algorithms, architectures, and innovations
+   (consciousness engine, neuro-symbolic reasoning, god powers, causal
+   superpowers, dream engine, etc.) are the intellectual property of the
+   Licensor. No ownership is transferred by this license.
+
+7. WARRANTY DISCLAIMER
+   THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND.
+
+8. LIMITATION OF LIABILITY
+   IN NO EVENT SHALL THE LICENSOR BE LIABLE FOR ANY DAMAGES ARISING FROM
+   THE USE OF THIS SOFTWARE.
+
+9. TERMINATION
+   This license terminates automatically if Licensee violates any term.
+   Upon termination, Licensee must destroy all copies of the Software.
+
+10. GOVERNING LAW
+    This license is governed by the laws applicable to international
+    software licensing agreements.
+
+CONTACT
+-------
+For licensing inquiries, enterprise deals, and government pricing:
+Email: f20240323@dubai.bits-pilani.ac.in
+GitHub: https://github.com/prady4the4bady/pradysagican
+
+By using this Software, you agree to these terms.

@@ -15,3 +15,6 @@ data/
 .venv/
 venv/
 project-manifest.md
+.env
+*.license
+~/.pradysagican/

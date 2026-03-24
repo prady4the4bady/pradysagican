@@ -4,10 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pradysagican"
-version = "1.0.0"
-description = "PRADYSAGICAN — World's First Super General Agentic Intelligence System"
+version = "6.0.0"
+description = "PRADYSAGICAN — The World's First Super General Intelligence System. 40 subsystems, 21K+ lines, 11.3M features."
 readme = "README.md"
-license = {text = "AGPL-3.0"}
+license = {text = "Proprietary — See LICENSE"}
 requires-python = ">=3.11"
 authors = [{name = "Prady", email = "f20240323@dubai.bits-pilani.ac.in"}]
 
@@ -16,11 +16,16 @@ dependencies = [
     "uvicorn[standard]>=0.30.0",
     "pydantic>=2.9.0",
     "httpx>=0.27.0",
-    "websockets>=13.0",
     "rich>=13.9.0",
     "numpy>=1.26.0",
-    "scikit-learn>=1.5.0",
     "networkx>=3.3",
+    "python-dotenv>=1.0.0",
+    "orjson>=3.10.0",
+]
+
+[project.optional-dependencies]
+full = [
+    "scikit-learn>=1.5.0",
     "chromadb>=0.5.0",
     "sentence-transformers>=3.0.0",
     "langgraph>=0.2.0",
@@ -28,14 +33,12 @@ dependencies = [
     "tiktoken>=0.7.0",
     "apscheduler>=3.10.0",
     "aiofiles>=24.1.0",
-    "python-dotenv>=1.0.0",
     "structlog>=24.4.0",
     "tenacity>=9.0.0",
     "jinja2>=3.1.0",
-    "orjson>=3.10.0",
+    "websockets>=13.0",
 ]
 
-[project.optional-dependencies]
 dev = ["pytest>=8.0", "pytest-asyncio>=0.24", "ruff>=0.6", "mypy>=1.11"]
 
 [project.scripts]

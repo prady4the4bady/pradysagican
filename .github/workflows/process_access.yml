@@ -1,0 +1,81 @@
+name: Process Access Request
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  process-access:
+    if: contains(github.event.issue.labels.*.name, 'access-request')
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    steps:
+      - name: Acknowledge Access Request
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const body = issue.body || '';
+
+            // Extract request type
+            const isFreeTrial = body.includes('Free Trial');
+            const isPaid = body.includes('Paid');
+
+            let response = '';
+
+            if (isFreeTrial) {
+              response = `## ✅ Free Trial Request Received
+
+              Thank you for your interest in **PRADYSAGICAN**!
+
+              **Your free trial request is being processed.**
+
+              The admin (@prady4the4bady) will review and grant access within 24 hours.
+
+              ---
+
+              **Want instant access?** Pay $5/month and get immediate access:
+
+              [![Pay with PayPal](https://img.shields.io/badge/PayPal-Pay_%245%2Fmonth-blue?logo=paypal)](https://www.paypal.com/ncp/payment/KGVSY9JY724RC)
+
+              <img src="https://raw.githubusercontent.com/prady4the4bady/pradysagican/main/assets/PRADY-qrcode.jpg" width="150"/>
+
+              After payment, reply here with your PayPal Transaction ID for instant access.`;
+            } else if (isPaid) {
+              response = `## 💳 Paid Access Request Received
+
+              Thank you for supporting **PRADYSAGICAN**!
+
+              **Your paid access request is being verified.**
+
+              The admin (@prady4the4bady) will verify your PayPal payment and grant access within 12 hours.
+
+              If you haven't paid yet:
+
+              [![Pay with PayPal](https://img.shields.io/badge/PayPal-Pay_%245%2Fmonth-blue?logo=paypal)](https://www.paypal.com/ncp/payment/KGVSY9JY724RC)
+
+              Once verified, you'll receive a collaborator invite to this repository.`;
+            } else {
+              response = `## 📋 Access Request Received
+
+              Your request has been logged. The admin will review it shortly.
+
+              **Payment:** https://www.paypal.com/ncp/payment/KGVSY9JY724RC`;
+            }
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: response
+            });
+
+            // Add processing label
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              labels: ['processing']
+            });

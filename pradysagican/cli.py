@@ -71,7 +71,7 @@ def cmd_chat(args):
             elif inp == "/status":
                 s = god.stats(); c.print(Panel(f"[green]Subsystems: {s['system']['subsystems_online']}/{s['system']['subsystems_total']}[/green]\n[cyan]Features: {s['features']['combinatorial_total']:,}[/cyan]\n[yellow]Health: {s['system']['health_pct']}%[/yellow]", title="System Status", border_style="green"))
             elif inp == "/subscribe":
-                c.print(Panel(f"[bold]$5/month[/bold] — Pay at:\n[link=https://www.paypal.com/ncp/payment/M9VNKLDZP2W3J]https://www.paypal.com/ncp/payment/M9VNKLDZP2W3J[/link]\n\nTrial: [cyan]pradysagican subscribe --email you@mail.com --trial 7[/cyan]", title="Subscribe", border_style="green"))
+                c.print(Panel(f"[bold]$5/month[/bold] — Pay at:\n[link=https://www.paypal.com/ncp/payment/KGVSY9JY724RC]https://www.paypal.com/ncp/payment/KGVSY9JY724RC[/link]\n\nTrial: [cyan]pradysagican subscribe --email you@mail.com --trial 7[/cyan]", title="Subscribe", border_style="green"))
             elif inp == "/tools":
                 from pradysagican.core.task_classifier import TaskCategory
                 tt = Table(title="Task Categories", border_style="cyan")

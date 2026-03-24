@@ -1,0 +1,77 @@
+name: "Access Request — Free Trial or Paid Subscription"
+description: "Request access to PRADYSAGICAN after payment or for a free trial"
+title: "[ACCESS] Request from "
+labels: ["access-request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## PRADYSAGICAN Access Request
+
+        **Paid users:** After paying $5/month at [PayPal](https://www.paypal.com/ncp/payment/KGVSY9JY724RC), fill this form to get access.
+
+        **Free trial:** Request a 7-day free trial by filling this form.
+
+        <p align="center">
+          <img src="https://raw.githubusercontent.com/prady4the4bady/pradysagican/main/assets/PRADY-qrcode.jpg" width="200" alt="Pay with QR Code"/>
+        </p>
+
+  - type: dropdown
+    id: request_type
+    attributes:
+      label: "Request Type"
+      options:
+        - "Free Trial (7 days)"
+        - "Free Trial (14 days)"
+        - "Free Trial (30 days)"
+        - "Paid — Monthly ($5/month)"
+        - "Paid — Enterprise (contact for pricing)"
+        - "Paid — Sovereign (government)"
+    validations:
+      required: true
+
+  - type: input
+    id: email
+    attributes:
+      label: "Email Address"
+      description: "The email you used for PayPal payment (or want trial sent to)"
+      placeholder: "you@example.com"
+    validations:
+      required: true
+
+  - type: input
+    id: github_username
+    attributes:
+      label: "GitHub Username"
+      description: "Your GitHub username to grant repository access"
+      placeholder: "your-github-username"
+    validations:
+      required: true
+
+  - type: input
+    id: paypal_transaction_id
+    attributes:
+      label: "PayPal Transaction ID"
+      description: "Leave blank for free trial requests"
+      placeholder: "e.g. 5GH12345AB678901C"
+    validations:
+      required: false
+
+  - type: textarea
+    id: use_case
+    attributes:
+      label: "How will you use PRADYSAGICAN?"
+      description: "Brief description of your intended use"
+      placeholder: "I want to use PRADY for..."
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: "Terms"
+      options:
+        - label: "I agree to the PRADYSAGICAN Proprietary License and will not redistribute, reverse-engineer, or use the software to train competing AI systems."
+          required: true
+        - label: "I understand that unauthorized modification or redistribution will result in immediate access revocation."
+          required: true

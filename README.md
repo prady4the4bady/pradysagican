@@ -13,7 +13,7 @@
 
 ![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=flat-square&logo=python&logoColor=white)
 ![License](https://img.shields.io/badge/License-Proprietary-red?style=flat-square)
-![Tests](https://img.shields.io/badge/Tests-152%20passed-brightgreen?style=flat-square)
+![Tests](https://img.shields.io/badge/Tests-171%20passed-brightgreen?style=flat-square)
 ![Subsystems](https://img.shields.io/badge/Subsystems-40%2F40%20online-blue?style=flat-square)
 ![Features](https://img.shields.io/badge/Features-11.3M%2B%20combinations-blueviolet?style=flat-square)
 
@@ -33,12 +33,25 @@
 | **Enterprise** | Contact us | Unlimited · modification rights |
 | **Sovereign** | Government | Full access · SOVEREIGN mode |
 
-**Pay via PayPal:** https://www.paypal.com/ncp/payment/M9VNKLDZP2W3J
+<div align="center">
 
-Start your free trial:
+[![Pay with PayPal](https://img.shields.io/badge/PayPal-Pay_%245%2Fmonth-0070BA?style=for-the-badge&logo=paypal&logoColor=white)](https://www.paypal.com/ncp/payment/KGVSY9JY724RC)
+
+**Scan to pay:**
+
+<img src="assets/PRADY-qrcode.jpg" width="200" alt="PRADY Payment QR Code"/>
+
+https://www.paypal.com/ncp/payment/KGVSY9JY724RC
+
+</div>
+
+**After payment**, [open an Access Request](https://github.com/prady4the4bady/pradysagican/issues/new?template=access_request.yml) with your PayPal Transaction ID to get repository access.
+
+**Start free trial** (no payment needed):
 ```bash
 pradysagican subscribe --email you@mail.com --trial 7
 ```
+Or [request a trial via GitHub](https://github.com/prady4the4bady/pradysagican/issues/new?template=access_request.yml).
 
 ---
 
@@ -201,7 +214,7 @@ pradysagican subscribe --email your@email.com --trial 7
 ```
 
 After trial, continue at **$5/month** via PayPal:
-https://www.paypal.com/ncp/payment/M9VNKLDZP2W3J
+https://www.paypal.com/ncp/payment/KGVSY9JY724RC
 
 Enterprise and Sovereign inquiries: f20240323@dubai.bits-pilani.ac.in
 

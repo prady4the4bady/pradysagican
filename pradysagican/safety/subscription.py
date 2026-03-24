@@ -13,7 +13,7 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
-PAYPAL_PAYMENT_URL = "https://www.paypal.com/ncp/payment/M9VNKLDZP2W3J"
+PAYPAL_PAYMENT_URL = "https://www.paypal.com/ncp/payment/KGVSY9JY724RC"
 MONTHLY_FEE_USD = 5
 
 class SubscriptionStatus(str, Enum):

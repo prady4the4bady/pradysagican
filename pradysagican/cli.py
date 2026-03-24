@@ -1,7 +1,7 @@
 """
 PRADYSAGICAN CLI — Beautiful, powerful, simple.
 Usage:  pradysagican <command>
-Commands: serve | chat | status | benchmark | evolve | subscribe | version
+Commands: serve | chat | status | benchmark | evolve | access | version
 """
 from __future__ import annotations
 import argparse, asyncio, sys, os, time
@@ -48,7 +48,7 @@ def cmd_chat(args):
     c.print(Panel(BANNER, border_style="cyan", padding=(1, 2)))
     t = Table(show_header=False, border_style="dim", box=None, padding=(0, 1))
     t.add_column(style="cyan"); t.add_column(style="white")
-    for cmd, desc in [("/help","Show commands"),("/status","System health"),("/dream <topic>","Creative dreaming"),("/predict <question>","Make prediction"),("/solve <problem>","Full problem solving"),("/tools","List tool categories"),("/subscribe","Subscription info"),("/quit","Exit")]:
+    for cmd, desc in [("/help","Show commands"),("/status","System health"),("/dream <topic>","Creative dreaming"),("/predict <question>","Make prediction"),("/solve <problem>","Full problem solving"),("/tools","List tool categories"),("/access","Open-access info"),("/quit","Exit")]:
         t.add_row(cmd, desc)
     c.print(Panel(t, title="[bold]Commands[/bold]", border_style="dim"))
     c.print()
@@ -70,8 +70,8 @@ def cmd_chat(args):
                 c.print(Panel(t, title="Commands", border_style="dim"))
             elif inp == "/status":
                 s = god.stats(); c.print(Panel(f"[green]Subsystems: {s['system']['subsystems_online']}/{s['system']['subsystems_total']}[/green]\n[cyan]Features: {s['features']['combinatorial_total']:,}[/cyan]\n[yellow]Health: {s['system']['health_pct']}%[/yellow]", title="System Status", border_style="green"))
-            elif inp == "/subscribe":
-                c.print(Panel(f"[bold]$5/month[/bold] — Pay at:\n[link=https://www.paypal.com/ncp/payment/KGVSY9JY724RC]https://www.paypal.com/ncp/payment/KGVSY9JY724RC[/link]\n\nTrial: [cyan]pradysagican subscribe --email you@mail.com --trial 7[/cyan]", title="Subscribe", border_style="green"))
+            elif inp == "/access":
+                c.print(Panel("[bold green]Open access is enabled.[/bold green]\n\nNo payment is required.\n\nOptional profile creation:\n[cyan]pradysagican access --email you@mail.com[/cyan]", title="Access", border_style="green"))
             elif inp == "/tools":
                 from pradysagican.core.task_classifier import TaskCategory
                 tt = Table(title="Task Categories", border_style="cyan")
@@ -137,18 +137,18 @@ def cmd_benchmark(args):
         c.print(t)
     asyncio.run(_run())
 
-def cmd_subscribe(args):
+def cmd_access(args):
     c = _console()
     from rich.panel import Panel
-    from pradysagican.safety.subscription import SubscriptionEnforcer, PAYPAL_PAYMENT_URL, MONTHLY_FEE_USD
-    enforcer = SubscriptionEnforcer()
+    from pradysagican.safety.access_policy import AccessPolicyEnforcer
+    enforcer = AccessPolicyEnforcer()
     email = getattr(args, "email", None)
-    trial_days = getattr(args, "trial", None)
-    if email and trial_days:
-        sub = enforcer.start_trial(email, int(trial_days))
-        c.print(Panel(f"[green]✓ Trial activated![/green]\n\nEmail: {email}\nDuration: {trial_days} days\nUser ID: {sub.user_id}\nExpires: {time.strftime('%Y-%m-%d', time.localtime(sub.expires_at))}\n\nTo continue after trial, pay ${MONTHLY_FEE_USD}/month:\n[link={PAYPAL_PAYMENT_URL}]{PAYPAL_PAYMENT_URL}[/link]", title="Trial Activated", border_style="green"))
+    role = getattr(args, "role", "default")
+    if email:
+        profile = enforcer.create_access_profile(email, role=role)
+        c.print(Panel(f"[green]Access profile created.[/green]\n\nEmail: {email}\nRole: {profile.role}\nUser ID: {profile.user_id}\nCreated: {time.strftime('%Y-%m-%d', time.localtime(profile.started_at))}\n\nCore access remains open with or without profiles.", title="Access Profile", border_style="green"))
     else:
-        c.print(Panel(f"[bold]PRADYSAGICAN Subscription[/bold]\n\n💰 [bold]${MONTHLY_FEE_USD}/month[/bold]\n\n[bold]Pay here:[/bold]\n[link={PAYPAL_PAYMENT_URL}]{PAYPAL_PAYMENT_URL}[/link]\n\n[bold]Start free trial:[/bold]\npradysagican subscribe --email you@mail.com --trial 7\n\n[dim]Trial: 7-30 days free\nMonthly: ${MONTHLY_FEE_USD}/month\nEnterprise: Contact f20240323@dubai.bits-pilani.ac.in[/dim]", title="Subscribe", border_style="cyan"))
+        c.print(Panel("[bold]PRADYSAGICAN Access[/bold]\n\n[bold green]Open access mode enabled[/bold green]\nNo payment required.\n\nOptional profile creation:\npradysagican access --email you@mail.com [--role default]", title="Access", border_style="cyan"))
 
 def cmd_evolve(args):
     c = _console()
@@ -175,10 +175,10 @@ def main():
     sub.add_parser("status", help="System health dashboard")
     sub.add_parser("benchmark", help="Run all 31 benchmarks")
     sub.add_parser("evolve", help="Run self-evolution cycle")
-    p_sub = sub.add_parser("subscribe", help="Manage subscription"); p_sub.add_argument("--email"); p_sub.add_argument("--trial", type=int, help="Trial duration in days")
+    p_access = sub.add_parser("access", help="Show open-access info / optional profile"); p_access.add_argument("--email"); p_access.add_argument("--role", default="default", help="Profile role label")
     sub.add_parser("version", help="Show version info")
     args = parser.parse_args()
-    dispatch = {"serve": cmd_serve, "chat": cmd_chat, "status": cmd_status, "benchmark": cmd_benchmark, "evolve": cmd_evolve, "subscribe": cmd_subscribe, "version": cmd_version}
+    dispatch = {"serve": cmd_serve, "chat": cmd_chat, "status": cmd_status, "benchmark": cmd_benchmark, "evolve": cmd_evolve, "access": cmd_access, "version": cmd_version}
     fn = dispatch.get(args.command)
     if fn: fn(args)
     else: parser.print_help()

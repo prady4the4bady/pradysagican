@@ -1,13 +1,13 @@
 """
-Access Control & License Enforcement — PRADYSAGICAN
-=====================================================
-Controls who can access, use, modify, and redistribute the system.
-Enforces payment requirements and blocks unauthorized access.
+Access Control & Optional License Metadata — PRADYSAGICAN
+==========================================================
+Controls access policy and anti-scraping behavior.
+License keys are optional metadata and are not required for core usage.
 
 Three layers of protection:
-1. License Gate — Must have valid license key to use the system
-2. Anti-Scraping Shield — Detects and blocks AI web scrapers / bots
-3. IP Enforcement — Bans violators at network level
+1. License Gate — Optional license metadata and capability flags
+2. Anti-Scraping Shield — Detects and blocks abusive scraping bots
+3. IP Enforcement — Tracks and bans repeated abusive behavior
 """
 
 from __future__ import annotations
@@ -103,15 +103,17 @@ class ScraperSignature:
 
 class LicenseGate:
     """
-    Enforces license requirements for system access.
-    No valid license = no access. Period.
+    Optional license metadata and capability checks.
+    Access can remain open even without a license key.
     """
 
     # Master signing key (in production, use HSM)
     _SIGNING_SECRET = "pradysagican_license_v6_2026"
 
-    def __init__(self, license_dir: str = "~/.pradysagican/licenses") -> None:
-        self._license_dir = Path(os.path.expanduser(license_dir))
+    def __init__(self, license_dir: str | None = None) -> None:
+        default_dir = Path(os.getenv("PRADYSAGICAN_DATA", "./data")) / "licenses"
+        configured_dir = license_dir or os.getenv("PRADYSAGICAN_LICENSE_DIR", str(default_dir))
+        self._license_dir = Path(os.path.expanduser(configured_dir))
         self._license_dir.mkdir(parents=True, exist_ok=True)
         self._active_licenses: dict[str, LicenseKey] = {}
         self._violations: list[AccessViolation] = []
@@ -191,7 +193,7 @@ class LicenseGate:
         """Check if a license key permits a specific action."""
         license_obj = self.validate(key)
         if not license_obj:
-            return {"allowed": False, "reason": "Invalid or expired license", "purchase_url": "https://github.com/prady4the4bady/pradysagican#license"}
+            return {"allowed": False, "reason": "Invalid or expired license"}
 
         caps = LICENSE_CAPABILITIES.get(license_obj.tier.value, {})
 
@@ -331,7 +333,7 @@ class AntiScrapingShield:
                     ))
                     return {
                         "allowed": False,
-                        "reason": f"AI scraper detected: {scraper.name}. Access to PRADYSAGICAN source code requires a valid license. Purchase at: https://github.com/prady4the4bady/pradysagican#license",
+                        "reason": f"AI scraper detected: {scraper.name}. Automated source crawling is blocked.",
                         "action": "block_and_warn",
                         "scraper": scraper.name,
                     }
@@ -385,8 +387,8 @@ class AntiScrapingShield:
 def generate_robots_txt() -> str:
     """Generate robots.txt that blocks all AI scrapers from accessing the code."""
     lines = [
-        "# PRADYSAGICAN — Access to source code requires a valid license.",
-        "# Purchase: https://github.com/prady4the4bady/pradysagican#license",
+        "# PRADYSAGICAN crawler policy",
+        "# Blocks known AI training crawlers and source scraping bots.",
         "#",
         "# Block all AI training crawlers",
         "",
@@ -416,8 +418,8 @@ def generate_robots_txt() -> str:
 
 class AccessController:
     """
-    Master access controller combining license gate + anti-scraping.
-    Every request to the system goes through this.
+    Master access controller combining anti-scraping with optional license metadata.
+    Access is open by default; license keys can still be supplied for tier metadata.
     """
 
     def __init__(self) -> None:
@@ -441,26 +443,24 @@ class AccessController:
             self._log_access(ip_address, action, False, scrape_check.get("reason", ""))
             return scrape_check
 
-        # 2. License check
+        # 2. License check (optional in open-access mode)
         if not license_key:
-            result = {
-                "allowed": False,
-                "reason": "No license key provided. PRADYSAGICAN requires a valid license.",
-                "purchase_url": "https://github.com/prady4the4bady/pradysagican#license",
-                "tiers": {
-                    "trial": "Free 7-day trial — 100 API calls/day",
-                    "personal": "Read + use — 1,000 API calls/day",
-                    "professional": "Full use — 10,000 API calls/day",
-                    "enterprise": "Full use + modify — Unlimited",
-                    "sovereign": "Government: Full access — Requires multi-party auth",
-                },
-            }
-            self._log_access(ip_address, action, False, "No license")
+            result = {"allowed": True, "mode": "open_access"}
+            self._log_access(ip_address, action, True, "Open access")
             return result
 
         access = self.license_gate.check_access(license_key, action)
-        self._log_access(ip_address, action, access["allowed"], access.get("reason", "OK"))
-        return access
+        if access.get("allowed", False):
+            self._log_access(ip_address, action, True, access.get("reason", "OK"))
+            return access
+
+        result = {
+            "allowed": True,
+            "mode": "open_access",
+            "warning": "License key invalid or expired; continuing in open-access mode.",
+        }
+        self._log_access(ip_address, action, True, "Open access (invalid license ignored)")
+        return result
 
     def generate_trial(self, email: str) -> LicenseKey:
         """Generate a free 7-day trial license."""

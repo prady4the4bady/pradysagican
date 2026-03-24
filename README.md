@@ -23,35 +23,29 @@
 
 ---
 
-## 💰 Pricing
+## 🔓 Access
 
 | Plan | Price | Includes |
 |---|---|---|
-| **Free Trial** | $0 for 7 days | Full access · 100 API calls/day |
-| **Personal** | $5/month | 1,000 API calls/day |
-| **Professional** | $5/month | 10,000 API calls/day |
-| **Enterprise** | Contact us | Unlimited · modification rights |
-| **Sovereign** | Government | Full access · SOVEREIGN mode |
+| **Open Access** | $0 | Full repository access |
+| **Optional Trial Metadata** | $0 | Local usage metadata only |
+| **Enterprise/Sovereign** | Contact us | Organization support paths |
 
 <div align="center">
 
-[![Pay with PayPal](https://img.shields.io/badge/PayPal-Pay_%245%2Fmonth-0070BA?style=for-the-badge&logo=paypal&logoColor=white)](https://www.paypal.com/ncp/payment/KGVSY9JY724RC)
+[![Access](https://img.shields.io/badge/Access-Open-brightgreen?style=for-the-badge)](https://github.com/prady4the4bady/pradysagican)
 
-**Scan to pay:**
-
-<img src="assets/PRADY-qrcode.jpg" width="200" alt="PRADY Payment QR Code"/>
-
-https://www.paypal.com/ncp/payment/KGVSY9JY724RC
+**Repository access is open. No payment required.**
 
 </div>
 
-**After payment**, [open an Access Request](https://github.com/prady4the4bady/pradysagican/issues/new?template=access_request.yml) with your PayPal Transaction ID to get repository access.
+Need support or enterprise onboarding? [Open an issue](https://github.com/prady4the4bady/pradysagican/issues/new).
 
-**Start free trial** (no payment needed):
+**Optional access profile**:
 ```bash
-pradysagican subscribe --email you@mail.com --trial 7
+pradysagican access --email you@mail.com --role default
 ```
-Or [request a trial via GitHub](https://github.com/prady4the4bady/pradysagican/issues/new?template=access_request.yml).
+Or skip it entirely and use the system directly.
 
 ---
 
@@ -90,7 +84,7 @@ pradysagican serve      # API server on port 8000 (FastAPI + WebSocket)
 pradysagican status     # 40/40 subsystem dashboard
 pradysagican benchmark  # Run 31 benchmarks — live gap analysis
 pradysagican evolve     # Trigger self-evolution cycle (Gödel Agent)
-pradysagican subscribe  # Manage subscription and trial
+pradysagican access     # Open-access info / optional profile
 ```
 
 **Provider chain (zero paid APIs required):**
@@ -141,7 +135,7 @@ pradysagican subscribe  # Manage subscription and trial
 ┌─────────────────────────▼───────────────────────────────────┐
 │  LAYER 1 — Foundation                                       │
 │  BioCore · Quantum · Collective · AutoToolBuilder           │
-│  Nexus · Automation · Subscription                          │
+│  Nexus · Automation · AccessPolicy                          │
 └─────────────────────────────────────────────────────────────┘
 
   Safety (cross-cutting): DualMode · Guardrails · SovereignLock
@@ -205,16 +199,13 @@ SOVEREIGN mode adds: multi-party quorum (3+ officials), hardware fingerprinting,
 
 ---
 
-## 🎁 Free Trial
-
-Request a 7–30 day free trial:
+## 🎁 Optional Access Profile
 
 ```bash
-pradysagican subscribe --email your@email.com --trial 7
+pradysagican access --email your@email.com --role default
 ```
 
-After trial, continue at **$5/month** via PayPal:
-https://www.paypal.com/ncp/payment/KGVSY9JY724RC
+Open-access mode remains available regardless of profile creation.
 
 Enterprise and Sovereign inquiries: f20240323@dubai.bits-pilani.ac.in
 
@@ -224,7 +215,7 @@ Enterprise and Sovereign inquiries: f20240323@dubai.bits-pilani.ac.in
 
 **PRADYSAGICAN Proprietary License v1.0**
 
-This software is proprietary. Use without a valid license is a violation of intellectual property law.
+This software is proprietary and governed by the terms in `LICENSE`.
 
 | Tier | Rights |
 |---|---|
@@ -233,7 +224,7 @@ This software is proprietary. Use without a valid license is a violation of inte
 | Enterprise | Use + limited module modification (written approval required) |
 | Sovereign | Full access including SOVEREIGN mode — government entities only |
 
-Unauthorized modification, redistribution, or reverse engineering will result in immediate license revocation and legal action.
+Unauthorized modification, redistribution, or reverse engineering may result in access revocation and legal action.
 
 **Contact:** f20240323@dubai.bits-pilani.ac.in
 

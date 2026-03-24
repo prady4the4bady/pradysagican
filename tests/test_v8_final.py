@@ -1,9 +1,11 @@
-"""Tests for PRADYSAGICAN final — Subscription, Task Classifier, CLI."""
+"""Tests for PRADYSAGICAN final — Access Policy, Task Classifier, CLI."""
 import pytest
-import time
-from pradysagican.safety.subscription import (
-    SubscriptionEnforcer, TokenGenerator, FileIntegrityMonitor,
-    SubscriptionStatus, PAYPAL_PAYMENT_URL,
+from pradysagican.safety.access_policy import (
+    ACCESS_INFO_URL,
+    AccessPolicyEnforcer,
+    AccessState,
+    FileIntegrityMonitor,
+    SessionTokenManager,
 )
 from pradysagican.core.task_classifier import (
     TaskClassifier, TaskCategory, TaskComplexity, AutonomousResearchEngine,
@@ -13,14 +15,14 @@ from pradysagican.core.task_classifier import (
 # ── Token Generator ──────────────────────────────────────────────────────
 
 def test_token_generation():
-    gen = TokenGenerator()
+    gen = SessionTokenManager()
     token = gen.generate("user_123")
     assert token.token_hash != ""
     assert not token.is_expired()
 
 
 def test_token_verification():
-    gen = TokenGenerator()
+    gen = SessionTokenManager()
     token = gen.generate("user_abc")
     assert gen.verify("user_abc", token.token_hash)
     assert not gen.verify("user_abc", "fake_token_hash")
@@ -34,58 +36,60 @@ def test_file_integrity():
     assert "intact" in result
 
 
-# ── Subscription Enforcer ─────────────────────────────────────────────────
+# ── Access Policy Enforcer ────────────────────────────────────────────────
 
 @pytest.mark.asyncio
-async def test_start_trial():
-    enforcer = SubscriptionEnforcer()
-    sub = enforcer.start_trial("test@example.com", 7)
-    assert sub.tier == "trial"
-    assert sub.status == SubscriptionStatus.TRIAL
-    result = await enforcer.check_subscription(sub.user_id)
+async def test_create_access_profile():
+    enforcer = AccessPolicyEnforcer()
+    profile = enforcer.create_access_profile("test@example.com", role="analyst")
+    assert profile.role == "analyst"
+    assert profile.state == AccessState.ACTIVE
+    result = await enforcer.check_access(profile.user_id)
     assert result["allowed"]
 
 
 @pytest.mark.asyncio
-async def test_no_subscription():
-    enforcer = SubscriptionEnforcer()
-    result = await enforcer.check_subscription("nonexistent_user")
-    assert not result["allowed"]
-    assert "payment_url" in result or "subscribe" in result.get("message", "").lower()
+async def test_no_profile_open_access():
+    enforcer = AccessPolicyEnforcer()
+    result = await enforcer.check_access("nonexistent_user")
+    assert result["allowed"]
+    assert result["status"] == "open_access"
 
 
 @pytest.mark.asyncio
-async def test_activate_subscription():
-    enforcer = SubscriptionEnforcer()
-    sub = enforcer.start_trial("test@pay.com", 7)
-    enforcer.activate_subscription(sub.user_id, "PAYPAL_TXN_123", "monthly")
-    result = await enforcer.check_subscription(sub.user_id)
+async def test_activate_profile():
+    enforcer = AccessPolicyEnforcer()
+    profile = enforcer.create_access_profile("test@ops.com", role="observer")
+    await enforcer.lock_access(profile.user_id, "maintenance")
+    enforcer.activate_profile(profile.user_id, role="operator")
+    result = await enforcer.check_access(profile.user_id)
     assert result["allowed"]
     assert result["status"] == "active"
+    assert result["role"] == "operator"
 
 
 @pytest.mark.asyncio
 async def test_ban_user():
-    enforcer = SubscriptionEnforcer()
-    sub = enforcer.start_trial("bad@user.com", 7)
-    await enforcer.ban_user(sub.user_id, "Tampering", permanent=True)
-    result = await enforcer.check_subscription(sub.user_id)
+    enforcer = AccessPolicyEnforcer()
+    profile = enforcer.create_access_profile("bad@user.com")
+    await enforcer.ban_user(profile.user_id, "Tampering", permanent=True)
+    result = await enforcer.check_access(profile.user_id)
     assert not result["allowed"]
     assert result["status"] == "banned"
 
 
-def test_payment_url():
-    enforcer = SubscriptionEnforcer()
-    url = enforcer.get_payment_url()
-    assert "paypal" in url.lower()
+def test_access_info_url():
+    enforcer = AccessPolicyEnforcer()
+    url = enforcer.get_access_info_url()
+    assert url == ACCESS_INFO_URL
 
 
-def test_subscription_stats():
-    enforcer = SubscriptionEnforcer()
-    enforcer.start_trial("a@b.com", 7)
+def test_access_stats():
+    enforcer = AccessPolicyEnforcer()
+    enforcer.create_access_profile("a@b.com")
     stats = enforcer.stats()
-    assert stats["trial"] >= 1
-    assert "payment_url" in stats
+    assert stats["provisioned"] >= 1
+    assert "access_info_url" in stats
 
 
 # ── Task Classifier ───────────────────────────────────────────────────────

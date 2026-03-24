@@ -91,11 +91,11 @@ def test_rate_limit_scraper():
 
 # ── Access Controller (Combined) ─────────────────────────────────────────
 
-def test_no_license_blocked():
+def test_no_license_allowed():
     ac = AccessController()
     result = ac.check_full_access(license_key="", ip_address="1.1.1.1")
-    assert not result["allowed"]
-    assert "purchase_url" in result or "license" in result.get("reason", "").lower()
+    assert result["allowed"]
+    assert result.get("mode") == "open_access"
 
 
 def test_valid_license_allowed():
@@ -119,4 +119,4 @@ def test_robots_txt():
     assert "GPTBot" in txt
     assert "ClaudeBot" in txt
     assert "Disallow: /" in txt
-    assert "license" in txt.lower()
+    assert "crawler policy" in txt.lower()

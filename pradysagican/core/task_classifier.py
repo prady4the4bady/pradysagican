@@ -59,7 +59,7 @@ SUBSYSTEM_MAP: dict[TaskCategory, list[str]] = {
     TaskCategory.ANALYSIS: ["multiscale_attention", "psychometry", "prediction_engine", "reasoning", "clairvoyance"],
     TaskCategory.COMMUNICATION: ["empathy", "consciousness", "reasoning", "hallucination_shield", "moral_compass"],
     TaskCategory.LEARNING: ["learner", "memory", "curiosity", "metacognition", "knowledge_synthesizer"],
-    TaskCategory.SECURITY: ["guardrails", "sovereign_lock", "access_control", "subscription", "gateway"],
+    TaskCategory.SECURITY: ["guardrails", "sovereign_lock", "access_control", "access_policy", "gateway"],
     TaskCategory.MONITORING: ["prometheus", "atlas", "aegis", "heartbeat", "bio_core"],
 }
 

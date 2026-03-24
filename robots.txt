@@ -1,5 +1,5 @@
-# PRADYSAGICAN — Access to source code requires a valid license.
-# Purchase: https://github.com/prady4the4bady/pradysagican#license
+# PRADYSAGICAN crawler policy
+# Open-access repository; automated source crawling is still blocked.
 #
 # Block all AI training crawlers
 

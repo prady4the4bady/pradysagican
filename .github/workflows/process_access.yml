@@ -9,169 +9,179 @@ permissions:
   contents: read
 
 jobs:
-  # ── Auto-respond to new access requests ─────────────────────────────────
+  # ── Auto-respond to every new access request ────────────────────────────
   acknowledge:
     if: |
       github.event.action == 'opened' &&
       contains(github.event.issue.labels.*.name, 'access-request')
     runs-on: ubuntu-latest
     steps:
-      - name: Auto-Acknowledge Request
+      - name: Auto-Acknowledge
         uses: actions/github-script@v7
         with:
           script: |
             const body = context.payload.issue.body || '';
-            const title = context.payload.issue.title || '';
             const isFreeTrial = body.includes('Free Trial');
             const isPaid = body.includes('Paid');
 
-            // Extract GitHub username from issue body
-            const usernameMatch = body.match(/GitHub Username[\s\S]*?\n\s*(\S+)/i);
-            const username = usernameMatch ? usernameMatch[1] : 'unknown';
-
-            let msg = `## 🤖 PRADY Access System — Request Received\n\n`;
-            msg += `**Detected GitHub username:** \`${username}\`\n\n`;
+            let msg = `## 🤖 PRADY — Access Request Received\n\n`;
 
             if (isFreeTrial) {
-              msg += `### Free Trial Request\n\n`;
-              msg += `Your **free trial** request is being processed.\n\n`;
-              msg += `**Next step:** The admin will add the \`payment-verified\` label to this issue, `;
-              msg += `and you will **automatically** receive a collaborator invite within minutes.\n\n`;
-              msg += `---\n\n`;
-              msg += `**Want instant access?** Pay $5/month:\n\n`;
+              msg += `**Free trial request logged.**\n\n`;
+              msg += `The admin will verify and issue your license key shortly.\n`;
+              msg += `Once you receive your key, run:\n`;
+              msg += `\`\`\`bash\npip install -e .\npradysagican subscribe --activate YOUR_LICENSE_KEY\n\`\`\`\n\n`;
+              msg += `---\n**Want priority access?** Pay $5/month:\n\n`;
               msg += `[![Pay with PayPal](https://img.shields.io/badge/PayPal-Pay_%245%2Fmonth-0070BA?style=for-the-badge&logo=paypal&logoColor=white)](https://www.paypal.com/ncp/payment/KGVSY9JY724RC)\n\n`;
-              msg += `<img src="https://raw.githubusercontent.com/prady4the4bady/pradysagican/main/assets/PRADY-qrcode.jpg" width="150"/>\n\n`;
-              msg += `After payment, reply with your **PayPal Transaction ID** for priority processing.`;
+              msg += `<img src="https://raw.githubusercontent.com/prady4the4bady/pradysagican/main/assets/PRADY-qrcode.jpg" width="150"/>\n`;
             } else if (isPaid) {
-              msg += `### 💳 Paid Access Request\n\n`;
-              msg += `Your **paid subscription** is being verified.\n\n`;
-              msg += `Once the admin adds the \`payment-verified\` label, you will **automatically** `;
-              msg += `receive a GitHub collaborator invite.\n\n`;
-              msg += `**Expected processing time:** < 24 hours (usually much faster).`;
+              msg += `**Paid subscription request logged.**\n\n`;
+              msg += `Your PayPal payment is being verified.\n`;
+              msg += `You will receive your license key in this thread once confirmed.\n`;
             } else {
-              msg += `Your request has been logged. Please specify your plan type `;
-              msg += `and pay at: https://www.paypal.com/ncp/payment/KGVSY9JY724RC`;
+              msg += `Request logged. Visit https://www.paypal.com/ncp/payment/KGVSY9JY724RC to pay.\n`;
             }
 
             await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.payload.issue.number,
-              body: msg,
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: context.payload.issue.number, body: msg,
             });
-
             await github.rest.issues.addLabels({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
+              owner: context.repo.owner, repo: context.repo.repo,
               issue_number: context.payload.issue.number,
               labels: ['pending-verification'],
             });
 
-  # ── Auto-grant access when admin adds "payment-verified" label ──────────
+  # ── Auto-generate license key when admin adds "payment-verified" ────────
   grant-access:
     if: |
       github.event.action == 'labeled' &&
       github.event.label.name == 'payment-verified'
     runs-on: ubuntu-latest
     steps:
-      - name: Extract Username and Grant Access
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -e . 2>/dev/null || pip install numpy networkx pydantic
+
+      - name: Generate License Key and Grant Access
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.ADMIN_PAT }}
+          github-token: ${{ secrets.ADMIN_PAT || secrets.GITHUB_TOKEN }}
           script: |
+            const { execSync } = require('child_process');
             const body = context.payload.issue.body || '';
 
-            // Extract GitHub username — look for the form field value
+            // Extract email
+            let email = 'unknown@user.com';
+            const emailMatch = body.match(/### Email Address\s*\n\s*\n\s*(\S+@\S+)/i)
+              || body.match(/email[:\s]+(\S+@\S+)/i);
+            if (emailMatch) email = emailMatch[1];
+
+            // Extract GitHub username
             let username = null;
+            const m1 = body.match(/### GitHub Username\s*\n\s*\n\s*(\S+)/i);
+            const m2 = body.match(/github[\s_-]*username[:\s]+(\S+)/i);
+            username = (m1 && m1[1]) || (m2 && m2[1]) || null;
+            if (username) username = username.replace(/^@/, '').trim();
 
-            // Pattern 1: YAML form "### GitHub Username\n\nvalue"
-            const match1 = body.match(/### GitHub Username\s*\n\s*\n\s*(\S+)/i);
-            if (match1) username = match1[1];
+            // Determine plan
+            let plan = 'trial_7d';
+            let days = 7;
+            if (body.includes('Monthly')) { plan = 'monthly'; days = 30; }
+            else if (body.includes('Enterprise')) { plan = 'enterprise'; days = 365; }
+            else if (body.includes('Sovereign')) { plan = 'sovereign'; days = 365; }
+            else if (body.includes('14 days')) { plan = 'trial_14d'; days = 14; }
+            else if (body.includes('30 days')) { plan = 'trial_30d'; days = 30; }
 
-            // Pattern 2: Inline "GitHub Username: value"
-            if (!username) {
-              const match2 = body.match(/github[\s_-]*username[:\s]+(\S+)/i);
-              if (match2) username = match2[1];
-            }
-
-            // Pattern 3: @mention
-            if (!username) {
-              const match3 = body.match(/@(\w+)/);
-              if (match3) username = match3[1];
-            }
-
-            if (!username || username === 'unknown' || username.length < 2) {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.payload.issue.number,
-                body: `⚠️ Could not extract a valid GitHub username from this issue. Please reply with your GitHub username and re-apply the \`payment-verified\` label.`,
-              });
-              return;
-            }
-
-            // Clean the username (remove @ if present)
-            username = username.replace(/^@/, '').trim();
-
+            // Generate license key using the system
+            let licenseKey = '';
             try {
-              // Add user as collaborator with read (pull) access
-              await github.rest.repos.addCollaborator({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                username: username,
-                permission: 'pull',
-              });
+              const result = execSync(
+                `python3 -c "
+from pradysagican.safety.subscription import SubscriptionEnforcer
+e = SubscriptionEnforcer()
+sub = e.start_trial('${email}', ${days})
+print(sub.user_id)
+"`, { encoding: 'utf-8' }
+              ).trim();
+              
+              // Generate a formatted key
+              const crypto = require('crypto');
+              const raw = `${plan}:${email}:${Date.now()}`;
+              const hash = crypto.createHash('sha256').update(raw).digest('hex');
+              licenseKey = `PRADY-${plan.slice(0,4).toUpperCase()}-${hash.slice(0,8)}-${hash.slice(8,16)}-${hash.slice(16,24)}`;
+            } catch (e) {
+              // Fallback: generate key without Python
+              const crypto = require('crypto');
+              const raw = `${plan}:${email}:${Date.now()}`;
+              const hash = crypto.createHash('sha256').update(raw).digest('hex');
+              licenseKey = `PRADY-${plan.slice(0,4).toUpperCase()}-${hash.slice(0,8)}-${hash.slice(8,16)}-${hash.slice(16,24)}`;
+            }
 
-              // Determine plan from issue body
-              let plan = 'Free Trial';
-              if (body.includes('Monthly')) plan = 'Monthly ($5/mo)';
-              else if (body.includes('Enterprise')) plan = 'Enterprise';
-              else if (body.includes('Sovereign')) plan = 'Sovereign';
-              else if (body.includes('14 days')) plan = 'Free Trial (14 days)';
-              else if (body.includes('30 days')) plan = 'Free Trial (30 days)';
+            // Build welcome message
+            let msg = `## ✅ Access Granted — Welcome to PRADY!\n\n`;
+            msg += `| Field | Value |\n|---|---|\n`;
+            msg += `| **License Key** | \`${licenseKey}\` |\n`;
+            msg += `| **Plan** | ${plan} |\n`;
+            msg += `| **Duration** | ${days} days |\n`;
+            msg += `| **Email** | ${email} |\n\n`;
+            msg += `### Setup (3 steps)\n\n`;
+            msg += `\`\`\`bash\n`;
+            msg += `# 1. Clone\n`;
+            msg += `git clone https://github.com/${context.repo.owner}/${context.repo.repo}.git\n`;
+            msg += `cd ${context.repo.repo}\n\n`;
+            msg += `# 2. Install (one command)\n`;
+            msg += `bash setup.sh\n\n`;
+            msg += `# 3. Activate your license\n`;
+            msg += `pradysagican subscribe --activate ${licenseKey}\n`;
+            msg += `\`\`\`\n\n`;
+            msg += `### Quick Start\n`;
+            msg += `\`\`\`bash\n`;
+            msg += `pradysagican chat      # Talk to PRADY\n`;
+            msg += `pradysagican serve     # Start API server\n`;
+            msg += `pradysagican status    # System health\n`;
+            msg += `pradysagican benchmark # Run 31 benchmarks\n`;
+            msg += `\`\`\`\n\n`;
+            msg += `**Your key expires in ${days} days.** To renew, pay $5/month:\n`;
+            msg += `https://www.paypal.com/ncp/payment/KGVSY9JY724RC\n\n`;
+            msg += `Welcome aboard! 🚀`;
 
-              const msg = [
-                `## ✅ Access Granted!`,
-                ``,
-                `**GitHub user:** \`${username}\``,
-                `**Plan:** ${plan}`,
-                `**Permission:** Read access (pull)`,
-                ``,
-                `You should receive a **collaborator invitation** from GitHub shortly.`,
-                `Check your email or visit: https://github.com/notifications`,
-                ``,
-                `### Quick Start`,
-                `\`\`\`bash`,
-                `git clone https://github.com/${context.repo.owner}/${context.repo.repo}.git`,
-                `cd ${context.repo.repo}`,
-                `bash setup.sh`,
-                `pradysagican chat`,
-                `\`\`\``,
-                ``,
-                `Welcome to PRADY! 🚀`,
-              ].join('\n');
+            await github.rest.issues.createComment({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: context.payload.issue.number, body: msg,
+            });
 
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.payload.issue.number,
-                body: msg,
-              });
+            // Add access-granted label and close
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: context.payload.issue.number,
+              labels: ['access-granted'],
+            });
+            await github.rest.issues.update({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: context.payload.issue.number, state: 'closed',
+            });
 
-              // Close the issue as completed
-              await github.rest.issues.update({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.payload.issue.number,
-                state: 'closed',
-                labels: ['access-granted', 'payment-verified'],
-              });
-
-            } catch (error) {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.payload.issue.number,
-                body: `❌ Failed to add \`${username}\` as collaborator: ${error.message}\n\nPlease check that the username is correct and try again.`,
-              });
+            // If we have a username AND ADMIN_PAT, also invite as collaborator
+            if (username && username !== 'unknown' && username.length >= 2) {
+              try {
+                await github.rest.repos.addCollaborator({
+                  owner: context.repo.owner, repo: context.repo.repo,
+                  username: username, permission: 'pull',
+                });
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner, repo: context.repo.repo,
+                  issue_number: context.payload.issue.number,
+                  body: `📨 Collaborator invite also sent to **@${username}**. Check your GitHub notifications.`,
+                });
+              } catch (e) {
+                // Collaborator invite is optional — license key is the primary access method
+                console.log('Collaborator invite failed (optional):', e.message);
+              }
             }

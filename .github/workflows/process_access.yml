@@ -1,81 +1,177 @@
-name: Process Access Request
+name: Autonomous Access Control
 
 on:
   issues:
-    types: [opened]
+    types: [opened, labeled]
+
+permissions:
+  issues: write
+  contents: read
 
 jobs:
-  process-access:
-    if: contains(github.event.issue.labels.*.name, 'access-request')
+  # ── Auto-respond to new access requests ─────────────────────────────────
+  acknowledge:
+    if: |
+      github.event.action == 'opened' &&
+      contains(github.event.issue.labels.*.name, 'access-request')
     runs-on: ubuntu-latest
-    permissions:
-      issues: write
-
     steps:
-      - name: Acknowledge Access Request
+      - name: Auto-Acknowledge Request
         uses: actions/github-script@v7
         with:
           script: |
-            const issue = context.payload.issue;
-            const body = issue.body || '';
-
-            // Extract request type
+            const body = context.payload.issue.body || '';
+            const title = context.payload.issue.title || '';
             const isFreeTrial = body.includes('Free Trial');
             const isPaid = body.includes('Paid');
 
-            let response = '';
+            // Extract GitHub username from issue body
+            const usernameMatch = body.match(/GitHub Username[\s\S]*?\n\s*(\S+)/i);
+            const username = usernameMatch ? usernameMatch[1] : 'unknown';
+
+            let msg = `## 🤖 PRADY Access System — Request Received\n\n`;
+            msg += `**Detected GitHub username:** \`${username}\`\n\n`;
 
             if (isFreeTrial) {
-              response = `## ✅ Free Trial Request Received
-
-              Thank you for your interest in **PRADYSAGICAN**!
-
-              **Your free trial request is being processed.**
-
-              The admin (@prady4the4bady) will review and grant access within 24 hours.
-
-              ---
-
-              **Want instant access?** Pay $5/month and get immediate access:
-
-              [![Pay with PayPal](https://img.shields.io/badge/PayPal-Pay_%245%2Fmonth-blue?logo=paypal)](https://www.paypal.com/ncp/payment/KGVSY9JY724RC)
-
-              <img src="https://raw.githubusercontent.com/prady4the4bady/pradysagican/main/assets/PRADY-qrcode.jpg" width="150"/>
-
-              After payment, reply here with your PayPal Transaction ID for instant access.`;
+              msg += `### Free Trial Request\n\n`;
+              msg += `Your **free trial** request is being processed.\n\n`;
+              msg += `**Next step:** The admin will add the \`payment-verified\` label to this issue, `;
+              msg += `and you will **automatically** receive a collaborator invite within minutes.\n\n`;
+              msg += `---\n\n`;
+              msg += `**Want instant access?** Pay $5/month:\n\n`;
+              msg += `[![Pay with PayPal](https://img.shields.io/badge/PayPal-Pay_%245%2Fmonth-0070BA?style=for-the-badge&logo=paypal&logoColor=white)](https://www.paypal.com/ncp/payment/KGVSY9JY724RC)\n\n`;
+              msg += `<img src="https://raw.githubusercontent.com/prady4the4bady/pradysagican/main/assets/PRADY-qrcode.jpg" width="150"/>\n\n`;
+              msg += `After payment, reply with your **PayPal Transaction ID** for priority processing.`;
             } else if (isPaid) {
-              response = `## 💳 Paid Access Request Received
-
-              Thank you for supporting **PRADYSAGICAN**!
-
-              **Your paid access request is being verified.**
-
-              The admin (@prady4the4bady) will verify your PayPal payment and grant access within 12 hours.
-
-              If you haven't paid yet:
-
-              [![Pay with PayPal](https://img.shields.io/badge/PayPal-Pay_%245%2Fmonth-blue?logo=paypal)](https://www.paypal.com/ncp/payment/KGVSY9JY724RC)
-
-              Once verified, you'll receive a collaborator invite to this repository.`;
+              msg += `### 💳 Paid Access Request\n\n`;
+              msg += `Your **paid subscription** is being verified.\n\n`;
+              msg += `Once the admin adds the \`payment-verified\` label, you will **automatically** `;
+              msg += `receive a GitHub collaborator invite.\n\n`;
+              msg += `**Expected processing time:** < 24 hours (usually much faster).`;
             } else {
-              response = `## 📋 Access Request Received
-
-              Your request has been logged. The admin will review it shortly.
-
-              **Payment:** https://www.paypal.com/ncp/payment/KGVSY9JY724RC`;
+              msg += `Your request has been logged. Please specify your plan type `;
+              msg += `and pay at: https://www.paypal.com/ncp/payment/KGVSY9JY724RC`;
             }
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: issue.number,
-              body: response
+              issue_number: context.payload.issue.number,
+              body: msg,
             });
 
-            // Add processing label
             await github.rest.issues.addLabels({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: issue.number,
-              labels: ['processing']
+              issue_number: context.payload.issue.number,
+              labels: ['pending-verification'],
             });
+
+  # ── Auto-grant access when admin adds "payment-verified" label ──────────
+  grant-access:
+    if: |
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'payment-verified'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract Username and Grant Access
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.ADMIN_PAT }}
+          script: |
+            const body = context.payload.issue.body || '';
+
+            // Extract GitHub username — look for the form field value
+            let username = null;
+
+            // Pattern 1: YAML form "### GitHub Username\n\nvalue"
+            const match1 = body.match(/### GitHub Username\s*\n\s*\n\s*(\S+)/i);
+            if (match1) username = match1[1];
+
+            // Pattern 2: Inline "GitHub Username: value"
+            if (!username) {
+              const match2 = body.match(/github[\s_-]*username[:\s]+(\S+)/i);
+              if (match2) username = match2[1];
+            }
+
+            // Pattern 3: @mention
+            if (!username) {
+              const match3 = body.match(/@(\w+)/);
+              if (match3) username = match3[1];
+            }
+
+            if (!username || username === 'unknown' || username.length < 2) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.issue.number,
+                body: `⚠️ Could not extract a valid GitHub username from this issue. Please reply with your GitHub username and re-apply the \`payment-verified\` label.`,
+              });
+              return;
+            }
+
+            // Clean the username (remove @ if present)
+            username = username.replace(/^@/, '').trim();
+
+            try {
+              // Add user as collaborator with read (pull) access
+              await github.rest.repos.addCollaborator({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                username: username,
+                permission: 'pull',
+              });
+
+              // Determine plan from issue body
+              let plan = 'Free Trial';
+              if (body.includes('Monthly')) plan = 'Monthly ($5/mo)';
+              else if (body.includes('Enterprise')) plan = 'Enterprise';
+              else if (body.includes('Sovereign')) plan = 'Sovereign';
+              else if (body.includes('14 days')) plan = 'Free Trial (14 days)';
+              else if (body.includes('30 days')) plan = 'Free Trial (30 days)';
+
+              const msg = [
+                `## ✅ Access Granted!`,
+                ``,
+                `**GitHub user:** \`${username}\``,
+                `**Plan:** ${plan}`,
+                `**Permission:** Read access (pull)`,
+                ``,
+                `You should receive a **collaborator invitation** from GitHub shortly.`,
+                `Check your email or visit: https://github.com/notifications`,
+                ``,
+                `### Quick Start`,
+                `\`\`\`bash`,
+                `git clone https://github.com/${context.repo.owner}/${context.repo.repo}.git`,
+                `cd ${context.repo.repo}`,
+                `bash setup.sh`,
+                `pradysagican chat`,
+                `\`\`\``,
+                ``,
+                `Welcome to PRADY! 🚀`,
+              ].join('\n');
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.issue.number,
+                body: msg,
+              });
+
+              // Close the issue as completed
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.issue.number,
+                state: 'closed',
+                labels: ['access-granted', 'payment-verified'],
+              });
+
+            } catch (error) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.issue.number,
+                body: `❌ Failed to add \`${username}\` as collaborator: ${error.message}\n\nPlease check that the username is correct and try again.`,
+              });
+            }

@@ -1,6 +1,7 @@
 """PRADYSAGICAN God-layer invention systems."""
 
 from pradysagican.godlayer.kernel import GodLayerKernel
+from pradysagican.godlayer.master_plan import CapabilityPlanItem, GodLayerMasterPlanner
 from pradysagican.godlayer.omega2 import GodLayerOmega2Runtime
 from pradysagican.godlayer.registry import (
     INVENTED_TOOL_SPECS,
@@ -13,6 +14,8 @@ from pradysagican.godlayer.registry import (
 
 __all__ = [
     "GodLayerKernel",
+    "CapabilityPlanItem",
+    "GodLayerMasterPlanner",
     "GodLayerOmega2Runtime",
     "InventedToolSpec",
     "INVENTED_TOOL_SPECS",

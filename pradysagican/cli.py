@@ -307,6 +307,7 @@ def cmd_godlayer(args):
         intent="improve benchmark performance safely",
     )
     cycle_probe = omega2.run_cycle_tick()
+    plan_probe = omega2.planner.execution_frame()
     c.print(Panel(BANNER, border_style="cyan", padding=(1, 2)))
     c.print(
         Panel(
@@ -327,7 +328,12 @@ def cmd_godlayer(args):
             f"[bold]OMEGA-2 Root[/bold]\n"
             f"window={cycle_probe['window']['window']} "
             f"primary_bus={cycle_probe['window']['primary_bus']} "
-            f"active_outputs={list(cycle_probe['outputs'].keys())}",
+            f"active_outputs={list(cycle_probe['outputs'].keys())}\n\n"
+            f"[bold]Master Plan[/bold]\n"
+            f"coverage={plan_probe['summary']['total_capabilities']}/{plan_probe['summary']['target_capabilities']} "
+            f"complete={plan_probe['summary']['coverage_complete']}\n"
+            f"tier1_batch={plan_probe['next_tier_1_batch'][:5]} "
+            f"tier2_batch={plan_probe['next_tier_2_batch'][:5]}",
             title="God-Layer Status",
             border_style="yellow",
         )

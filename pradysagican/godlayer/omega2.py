@@ -7,6 +7,7 @@ from datetime import datetime
 from typing import Any
 
 from pradysagican.godlayer.kernel import GodLayerKernel
+from pradysagican.godlayer.master_plan import GodLayerMasterPlanner
 
 
 @dataclass(frozen=True)
@@ -40,6 +41,7 @@ class GodLayerOmega2Runtime:
     """Practical root runtime for the proposed 5-bus architecture."""
 
     kernel: GodLayerKernel = field(default_factory=GodLayerKernel)
+    planner: GodLayerMasterPlanner = field(default_factory=GodLayerMasterPlanner)
 
     BUSES: tuple[CoreBus, ...] = (
         CoreBus("BUS-0", "Survival", "100Hz", ("MAXWELL", "ABC", "FORTRESS")),
@@ -155,5 +157,6 @@ class GodLayerOmega2Runtime:
             "architecture": self.architecture_summary(),
             "cycle": self.run_cycle_tick(local_hour=local_hour),
             "kernel_status": self.kernel.status(),
+            "master_plan": self.planner.execution_frame(),
         }
 

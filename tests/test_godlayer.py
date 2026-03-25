@@ -1,6 +1,7 @@
 """Tests for God-layer inventions package integration."""
 
 from pradysagican.godlayer import (
+    GodLayerMasterPlanner,
     GodLayerKernel,
     GodLayerOmega2Runtime,
     TOTAL_INVENTED_TOOLS,
@@ -60,3 +61,18 @@ def test_godlayer_omega2_runtime_cycle_tick() -> None:
     assert tick["window"]["primary_bus"] == "BUS-4"
     assert "BUS-4" in tick["outputs"]
     assert "BUS-1" in tick["outputs"]
+
+
+def test_godlayer_master_planner_has_500_capabilities() -> None:
+    planner = GodLayerMasterPlanner()
+    summary = planner.summary()
+    assert summary["total_capabilities"] == 500
+    assert summary["coverage_complete"] is True
+    assert summary["by_tier"][1] == 100
+
+
+def test_godlayer_master_planner_batches() -> None:
+    planner = GodLayerMasterPlanner()
+    batch = planner.next_batch(tier=1, limit=10)
+    assert len(batch) == 10
+    assert all(item.tier == 1 for item in batch)

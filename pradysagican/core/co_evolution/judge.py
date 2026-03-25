@@ -16,7 +16,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Callable
 from enum import Enum
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 logger = logging.getLogger(__name__)
@@ -41,7 +41,7 @@ class BenchmarkResult:
     duration_ms: float
     error_message: Optional[str] = None
     metadata: Dict[str, Any] = field(default_factory=dict)
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 @dataclass
@@ -52,7 +52,7 @@ class FitnessScore:
     component_scores: Dict[str, float] = field(default_factory=dict)
     benchmark_results: List[BenchmarkResult] = field(default_factory=list)
     reliability: float = 1.0  # Confidence in score
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     evaluation_id: str = field(default_factory=lambda: str(uuid.uuid4()))
 
     def is_improvement(self, previous: Optional[FitnessScore]) -> bool:
@@ -237,7 +237,7 @@ class MAEJudge:
             )
 
         try:
-            start_time = datetime.utcnow()
+            start_time = datetime.now(timezone.utc)
 
             # Run with timeout
             score = await asyncio.wait_for(
@@ -246,7 +246,7 @@ class MAEJudge:
             )
 
             duration_ms = (
-                (datetime.utcnow() - start_time).total_seconds() * 1000
+                (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
             )
 
             # Ensure score is in [0, 1]

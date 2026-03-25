@@ -20,7 +20,7 @@ import uuid
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Optional, Callable, Set, Tuple
-from datetime import datetime
+from datetime import datetime, timezone
 import numpy as np
 from collections import defaultdict, deque
 
@@ -71,7 +71,7 @@ class SystemInteraction:
     synergy_factor: float
     emergent_properties: List[str] = field(default_factory=list)
     evidence: List[Dict[str, Any]] = field(default_factory=list)
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 @dataclass
@@ -84,7 +84,7 @@ class ImprovementCycle:
     improvement_rate: float
     pattern: ImprovementPattern
     improvements_applied: List[str] = field(default_factory=list)
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 @dataclass
@@ -96,7 +96,7 @@ class GoalRefinement:
     confidence_increase: float
     learning_source: str
     reasoning: str
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 @dataclass
@@ -712,7 +712,7 @@ class EmergentBehaviorDetector:
                 "novel_properties": self._extract_novel_properties(system_state),
                 "coordination_level": self._measure_coordination(individual_behaviors),
                 "novelty_metrics": self._calculate_novelty(system_state),
-                "timestamp": datetime.utcnow(),
+                "timestamp": datetime.now(timezone.utc),
             }
 
             self.detected_behaviors[str(uuid.uuid4())] = behavior

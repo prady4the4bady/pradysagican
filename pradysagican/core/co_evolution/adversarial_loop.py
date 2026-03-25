@@ -15,7 +15,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Tuple
 from enum import Enum
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 logger = logging.getLogger(__name__)
@@ -41,7 +41,7 @@ class AdversarialMatch:
     duration_ms: float = 0.0
     moves_count: int = 0
     match_data: Dict[str, Any] = field(default_factory=dict)
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     tournament_id: Optional[str] = None
 
     def get_winner(self) -> Optional[str]:
@@ -174,7 +174,7 @@ class Tournament:
         self.matches: List[AdversarialMatch] = []
         self.rankings: Dict[str, AgentRanking] = {}
         self.agent_match_history: Dict[str, List[str]] = {}
-        self.created_at = datetime.utcnow()
+        self.created_at = datetime.now(timezone.utc)
         self.current_round = 0
         self.total_rounds = 0
 

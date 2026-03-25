@@ -10,7 +10,7 @@ from typing import Any, Dict, List, Optional, Callable, Tuple
 from enum import Enum
 from abc import ABC, abstractmethod
 import asyncio
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 
@@ -335,7 +335,7 @@ class MultiAgentOrchestrator:
                 await self.global_best_agent.transfer_knowledge(worst_agent)
 
         self.interaction_history.append({
-            "timestamp": datetime.utcnow(),
+            "timestamp": datetime.now(timezone.utc),
             "global_best_fitness": self.global_best_fitness,
             "num_interactions": len(self.populations)
         })
@@ -376,5 +376,5 @@ class MultiAgentOrchestrator:
             "global_best_fitness": self.global_best_fitness,
             "population_stats": stats,
             "interactions": len(self.interaction_history),
-            "timestamp": datetime.utcnow()
+            "timestamp": datetime.now(timezone.utc)
         }

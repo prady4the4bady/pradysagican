@@ -19,7 +19,7 @@ import uuid
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple, Set
-from datetime import datetime
+from datetime import datetime, timezone
 import numpy as np
 from collections import defaultdict
 
@@ -350,7 +350,7 @@ class DomainTransferLearning:
             "total_improvement": final_performance - initial_performance,
             "adaptation_steps": len(steps),
             "domain_characteristics": domain_characteristics,
-            "timestamp": datetime.utcnow(),
+            "timestamp": datetime.now(timezone.utc),
         }
 
         self.domain_adaptations[adaptation_id] = adaptation_result

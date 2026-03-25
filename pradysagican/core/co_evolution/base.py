@@ -10,7 +10,7 @@ from typing import Any, Dict, List, Optional, Callable, Set, Tuple
 from enum import Enum
 from abc import ABC, abstractmethod
 import asyncio
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 
@@ -32,7 +32,7 @@ class EvolutionMetrics:
     worst_fitness: float
     diversity_score: float
     convergence_rate: float
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
     def is_converged(self, threshold: float = 0.95) -> bool:
         """Check if population has converged."""
@@ -49,7 +49,7 @@ class AgentGeneration:
     generation_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     agents: List[Any] = field(default_factory=list)
     fitness_scores: Dict[str, float] = field(default_factory=dict)
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     parent_generation_id: Optional[str] = None
     evolution_strategy: str = "genetic_algorithm"
 
@@ -80,7 +80,7 @@ class CoEvolutionContext:
         """Update shared knowledge pool."""
         self.shared_knowledge[key] = {
             "value": value,
-            "timestamp": datetime.utcnow(),
+            "timestamp": datetime.now(timezone.utc),
             "version": self.shared_knowledge.get(key, {}).get("version", 0) + 1
         }
 
@@ -136,7 +136,7 @@ class ToolR0Agent(ABC):
                 "tool_type": tool_type,
                 "args": args,
                 "kwargs": kwargs,
-                "timestamp": datetime.utcnow(),
+                "timestamp": datetime.now(timezone.utc),
                 "agent_id": self.agent_id
             }
 
@@ -150,7 +150,7 @@ class ToolR0Agent(ABC):
         self.evolution_log.append({
             "action": "capability_added",
             "capability": capability_name,
-            "timestamp": datetime.utcnow()
+            "timestamp": datetime.now(timezone.utc)
         })
 
     async def transfer_knowledge(self, target_agent: 'ToolR0Agent') -> None:

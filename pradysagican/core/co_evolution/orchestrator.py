@@ -15,7 +15,7 @@ import asyncio
 import logging
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Callable, Tuple
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 from .proposer import MAEProposer, ProposalStrategy, PopulationSnapshot
@@ -37,7 +37,7 @@ class EvolutionState:
     diversity_score: float = 0.5
     convergence_rate: float = 0.0
     stagnation_counter: int = 0
-    creation_timestamp: datetime = field(default_factory=datetime.utcnow)
+    creation_timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     last_improvement_generation: int = 0
 
 
@@ -119,7 +119,7 @@ class CoEvolutionOrchestrator:
             raise RuntimeError("Evolution not initialized")
 
         state = self.evolution_state
-        cycle_start = datetime.utcnow()
+        cycle_start = datetime.now(timezone.utc)
 
         cycle_metrics = {
             "generation": state.current_generation,
@@ -153,7 +153,7 @@ class CoEvolutionOrchestrator:
         await self._adapt_parameters(updated_state)
 
         cycle_duration_ms = (
-            (datetime.utcnow() - cycle_start).total_seconds() * 1000
+            (datetime.now(timezone.utc) - cycle_start).total_seconds() * 1000
         )
         cycle_metrics["duration_ms"] = cycle_duration_ms
 
@@ -336,13 +336,13 @@ class CoEvolutionOrchestrator:
             Final evolution summary
         """
         self.is_running = True
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
 
         try:
             generation = 0
             while generation < self.max_generations:
                 # Check time limit
-                elapsed = (datetime.utcnow() - start_time).total_seconds()
+                elapsed = (datetime.now(timezone.utc) - start_time).total_seconds()
                 if elapsed > duration_seconds:
                     logger.info(f"Evolution time limit reached ({elapsed:.1f}s)")
                     break

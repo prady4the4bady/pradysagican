@@ -20,7 +20,7 @@ import uuid
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Optional, Callable, Tuple, Set
-from datetime import datetime
+from datetime import datetime, timezone
 import numpy as np
 from collections import defaultdict
 
@@ -687,7 +687,7 @@ class SystemSynthesizer:
         Returns:
             Execution result
         """
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         result = {"data": data, "pipeline_results": []}
 
         try:
@@ -712,7 +712,7 @@ class SystemSynthesizer:
             result["success"] = False
             result["error"] = str(e)
 
-        elapsed = (datetime.utcnow() - start_time).total_seconds() * 1000
+        elapsed = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
         result["latency_ms"] = elapsed
 
         return result

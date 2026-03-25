@@ -15,7 +15,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Tuple, Set
 from enum import Enum
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 logger = logging.getLogger(__name__)
@@ -51,7 +51,7 @@ class Solution:
     feasibility_score: float = 1.0
     implementation: Dict[str, Any] = field(default_factory=dict)
     conflict_resolutions: List[str] = field(default_factory=list)
-    creation_timestamp: datetime = field(default_factory=datetime.utcnow)
+    creation_timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
     def is_dominated_by(self, other: Solution, objectives: List[Objective]) -> bool:
         """Check if this solution is dominated by another."""
@@ -151,7 +151,7 @@ class MAESolver:
             "strategy": strategy.value,
             "num_proposals": len(proposals),
             "num_solutions": len(candidates),
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         })
 
         logger.info(

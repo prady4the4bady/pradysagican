@@ -16,7 +16,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Callable, Set, Tuple
 from enum import Enum
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 logger = logging.getLogger(__name__)
@@ -42,7 +42,7 @@ class ToolSpecification:
     outputs: Dict[str, str] = field(default_factory=dict)
     dependencies: List[str] = field(default_factory=list)
     implementation: Optional[Callable] = None
-    creation_timestamp: datetime = field(default_factory=datetime.utcnow)
+    creation_timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     success_count: int = 0
     failure_count: int = 0
     usage_count: int = 0
@@ -58,7 +58,7 @@ class ToolComposition:
     total_trials: int = 0
     successful_trials: int = 0
     avg_execution_time_ms: float = 0.0
-    discovered_timestamp: datetime = field(default_factory=datetime.utcnow)
+    discovered_timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     problem_domain: str = ""
     generalization_score: float = 0.0
 
@@ -136,7 +136,7 @@ class ToolR0Evolution:
                     "action": "composite_created",
                     "tool_id": tool_id,
                     "composition_id": composition.composition_id,
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
                 })
                 return tool
 
@@ -167,7 +167,7 @@ class ToolR0Evolution:
                         "action": "recursive_created",
                         "tool_id": tool_id,
                         "subtools": subtools,
-                        "timestamp": datetime.utcnow().isoformat(),
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
                     })
                     return recursive_tool
 
@@ -182,7 +182,7 @@ class ToolR0Evolution:
             self.build_history.append({
                 "action": "atomic_created",
                 "tool_id": tool_id,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
             })
             return atomic_tool
 

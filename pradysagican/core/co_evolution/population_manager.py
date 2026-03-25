@@ -15,7 +15,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Set, Tuple
 from enum import Enum
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 logger = logging.getLogger(__name__)
@@ -81,7 +81,7 @@ class SpeciesPopulation:
     average_fitness: float = 0.0
     average_novelty: float = 0.0
     diversity_score: float = 0.0
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
     def update_metrics(self) -> None:
         """Update species population metrics."""
@@ -131,7 +131,7 @@ class PopulationCluster:
         # Metrics
         self.generation = 0
         self.total_individuals = 0
-        self.creation_timestamp = datetime.utcnow()
+        self.creation_timestamp = datetime.now(timezone.utc)
 
     def add_individual(
         self,

@@ -26,7 +26,7 @@ from typing import Dict, Any, List, Optional, Callable, Tuple
 from dataclasses import dataclass, asdict, field
 from enum import Enum
 import hashlib
-from datetime import datetime
+from datetime import datetime, timezone
 
 logger = logging.getLogger(__name__)
 
@@ -124,7 +124,7 @@ class BehavioralContract:
     # Metadata
     version: str = "1.0"
     author: str = "system"
-    created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     signature: Optional[ContractSignature] = None
     
     # Immutability flag

@@ -14,11 +14,30 @@
 ![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=flat-square&logo=python&logoColor=white)
 ![License](https://img.shields.io/badge/License-Proprietary-red?style=flat-square)
 ![CI](https://github.com/prady4the4bady/pradysagican/actions/workflows/ci.yml/badge.svg)
-![Tests](https://img.shields.io/badge/Tests-181%20passed-brightgreen?style=flat-square)
+![Tests](https://img.shields.io/badge/Tests-414%20passed-brightgreen?style=flat-square)
 ![Subsystems](https://img.shields.io/badge/Subsystems-40%2F40%20online-blue?style=flat-square)
 ![Features](https://img.shields.io/badge/Features-11.3M%2B%20combinations-blueviolet?style=flat-square)
 
 *23,000+ lines · 50+ modules · 280+ classes · 31 benchmarks*
+
+## 🎯 Latest Update: Phase 5 Complete ✅
+
+**Phase 5 Self-Referential Evolution** (January 2026)
+- 8 autonomous self-improvement features (F601-F611)
+- 3-gate safety system (Overseer → Validator → Tests)
+- 20-minute autonomous evolution cycles
+- 123 new tests + 18 integration tests (all passing)
+- 414 total tests passing (0 regressions)
+- Phase 6 co-evolutionary framework started
+- 100+ KB documentation across 8 guides
+
+**Key Achievements**:
+- ✅ Autonomous code editing with safety vetting
+- ✅ Auto-RL learning without human labels
+- ✅ Evolutionary variant archive (1000+ stored)
+- ✅ 80-98% context reduction (SOUL.md + Progressive Loader)
+- ✅ MAXWELL daemon integration
+- ✅ Production ready for 7-day stability test
 
 </div>
 
@@ -67,7 +86,7 @@ docker run -p 8000:8000 prady4thebady/pradysagican:latest
 ```bash
 make install   # install dependencies
 make run       # start API server
-make test      # run 181 tests
+make test      # run 414 tests
 ```
 
 **pip (editable):**

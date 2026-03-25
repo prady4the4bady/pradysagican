@@ -27,6 +27,21 @@ from pradysagican.core.god_powers import (
     KnowledgeSynthesizer, SynthesizedInsight, MoralCompass, MoralAssessment,
 )
 
+# Phase 5: Evolution, Self-Reference, Learning, Autonomous
+from pradysagican.core.evolution import (
+    Validator, ValidationReport, ValidationDecision, BenchmarkResult, BenchmarkType,
+    DGMArchive, Variant, VariantType, VariantMetrics, SamplingStrategy,
+)
+from pradysagican.core.self_ref import (
+    SelfRefEditor, EditResult, Improvement, ImprovementType, CodeMetrics,
+)
+from pradysagican.core.learning import (
+    AutoRL, FailureTrajectory, FailureEvent, FailureCategory, Principle, RetrievalResult,
+)
+from pradysagican.core.autonomous import (
+    Heartbeat, HeartbeatPhase, ApprovalGate, ApprovalDecision, CycleMetrics, FailureQueueItem,
+)
+
 __all__ = [
     "ConsciousnessEngine", "ReasoningEngine", "MemorySystem", "WorldModel",
     "PrometheusEngine", "AtlasRuntime", "AegisWiring",
@@ -60,4 +75,13 @@ __all__ = [
     "DreamEngine", "DreamResult", "CausalSuperpower", "CausalEffect",
     "MetaCognitionV2", "MetaCognitiveLayer", "MultiScaleAttention",
     "KnowledgeSynthesizer", "SynthesizedInsight", "MoralCompass", "MoralAssessment",
+    # Phase 5: Evolution
+    "Validator", "ValidationReport", "ValidationDecision", "BenchmarkResult", "BenchmarkType",
+    "DGMArchive", "Variant", "VariantType", "VariantMetrics", "SamplingStrategy",
+    # Phase 5: Self-Reference
+    "SelfRefEditor", "EditResult", "Improvement", "ImprovementType", "CodeMetrics",
+    # Phase 5: Learning
+    "AutoRL", "FailureTrajectory", "FailureEvent", "FailureCategory", "Principle", "RetrievalResult",
+    # Phase 5: Autonomous
+    "Heartbeat", "HeartbeatPhase", "ApprovalGate", "ApprovalDecision", "CycleMetrics", "FailureQueueItem",
 ]

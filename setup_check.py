@@ -49,7 +49,7 @@ async def check_dependencies() -> bool:
     section("Core Dependencies")
     required = [
         "pydantic", "httpx", "fastapi", "uvicorn", 
-        "pytest", "rich", "pyyaml", "psutil"
+        "pytest", "rich", "yaml", "psutil"  # Import as 'yaml', not 'pyyaml'
     ]
     
     all_ok = True

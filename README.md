@@ -9,7 +9,7 @@
 ![Tests](https://img.shields.io/badge/Tests-692%2F692-brightgreen?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-Proprietary-red?style=for-the-badge)
 
-**28,000+ lines · 75-90+ features · 350+ classes · 5 autonomous buses · 8 implementation phases**
+**28,000+ lines · 75-90+ verified features · 150+ classes · 5 autonomous buses · 8 implementation phases**
 
 [🚀 Quick Start](#quick-start) • [📚 Features](#features) • [🏗️ Architecture](#architecture) • [🔒 Safety](#safety) • [📊 Comparison](#comparison) • [🛠️ API](#api)
 
@@ -86,9 +86,58 @@ docker run -p 8000:8000 prady4thebady/pradysagican:latest
 ```bash
 pradysagican chat              # Interactive TUI mode
 pradysagican serve             # API server (port 8000)
-pradysagican status            # 40/40 subsystem dashboard
+pradysagican status            # 55/55 subsystem dashboard
 pradysagican benchmark         # Run 31 benchmarks
 pradysagican evolve            # Trigger self-improvement cycle
+```
+
+### ⚠️ IMPORTANT: Configure an LLM Provider
+
+**Without an LLM, PRADYSAGICAN will echo your input instead of thinking.** Choose ONE option:
+
+<details>
+<summary><b>Option 1: Cloud API (Free, Fastest) — Recommended</b></summary>
+
+```bash
+# Get API key from one provider (all free tier):
+export GROQ_API_KEY=your_key       # https://console.groq.com
+# OR
+export TOGETHER_API_KEY=your_key   # https://api.together.xyz
+# OR
+export NVIDIA_API_KEY=your_key     # https://api.nvidia.com
+
+# Now the system will think:
+source .venv/bin/activate
+pradysagican chat
+```
+
+</details>
+
+<details>
+<summary><b>Option 2: Local Ollama (Free, No API Key)</b></summary>
+
+```bash
+# Install and run Ollama locally:
+docker run -d -p 11434:11434 ollama/ollama
+ollama pull llama3.2
+
+# Verify it works:
+curl http://localhost:11434/api/tags
+
+# Now use PRADYSAGICAN:
+source .venv/bin/activate
+pradysagican chat
+```
+
+</details>
+
+### Verify Your Setup
+
+```bash
+# Run validation script:
+python setup_check.py
+
+# Should show: ✓ LLM Providers, ✓ Subsystems, etc.
 ```
 
 ---

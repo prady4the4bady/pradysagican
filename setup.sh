@@ -30,7 +30,7 @@ banner() {
     ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝    ╚═╝   ╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═══╝
 
     Super General Intelligence System v6.0
-    40 subsystems • 21,000+ lines • 11.3M features • 138 tests passing
+    55 subsystems • 39,000+ lines • 75-90+ features • 692 tests passing
 
 EOF
     echo -e "${NC}"
@@ -89,6 +89,24 @@ else
     warn "This may be due to optional dependencies. Core functionality is intact."
 fi
 
+# ── Step 4a: Verify at least one LLM provider is available ────────────────
+step "Checking LLM provider availability..."
+if [ ! -z "$GROQ_API_KEY" ] || [ ! -z "$TOGETHER_API_KEY" ] || [ ! -z "$NVIDIA_API_KEY" ] || [ ! -z "$HF_TOKEN" ]; then
+    info "Cloud LLM provider detected (one or more API keys set)"
+elif command -v ollama &>/dev/null; then
+    info "Ollama detected (local inference ready)"
+else
+    warn "No LLM provider configured (cloud API keys OR local Ollama)"
+    warn "The system will not be able to think without an LLM."
+    warn ""
+    warn "Quick fix — choose ONE:"
+    warn "  1. Cloud (free tier, fastest):"
+    warn "     export GROQ_API_KEY=your_key  (get from https://console.groq.com)"
+    warn "  2. Local (free, no API key needed):"
+    warn "     docker run -d -p 11434:11434 ollama/ollama"
+    warn "     ollama pull llama3.2"
+fi
+
 # ── Step 5: Create data directory ────────────────────────────────────────
 step "Setting up data directory..."
 mkdir -p data/chromadb data/logs data/memory data/tools data/benchmarks
@@ -123,19 +141,24 @@ echo -e "${GREEN}${BOLD}╔═════════════════�
 echo -e "${GREEN}${BOLD}║           PRADYSAGICAN v6.0 — Installation Complete          ║${NC}"
 echo -e "${GREEN}${BOLD}╚══════════════════════════════════════════════════════════════╝${NC}"
 echo ""
-echo -e "  ${BOLD}Quick Start:${NC}"
-echo -e "    source .venv/bin/activate"
-echo -e "    pradysagican serve          ${CYAN}# Start API server${NC}"
-echo -e "    pradysagican chat           ${CYAN}# Interactive mode${NC}"
-echo -e "    pradysagican status         ${CYAN}# System health${NC}"
-echo -e "    pradysagican benchmark      ${CYAN}# Run benchmarks${NC}"
-echo -e "    pradysagican evolve         ${CYAN}# Self-evolution${NC}"
+echo -e "  ${BOLD}⚡ Quick Start (pick one):${NC}"
 echo ""
-echo -e "  ${BOLD}Python API:${NC}"
+echo -e "  ${CYAN}Option 1: Interactive Chat (Recommended)${NC}"
+echo -e "    source .venv/bin/activate"
+echo -e "    pradysagican chat           ${CYAN}# Type commands: /help, /status, /solve 'problem'${NC}"
+echo ""
+echo -e "  ${CYAN}Option 2: API Server${NC}"
+echo -e "    source .venv/bin/activate"
+echo -e "    pradysagican serve          ${CYAN}# Starts on http://localhost:8000${NC}"
+echo ""
+echo -e "  ${CYAN}Option 3: Python Code${NC}"
 echo -e "    from pradysagican.god import PradysagicanGod"
 echo -e "    god = PradysagicanGod()"
-echo -e "    await god.initialize()      ${CYAN}# 40/40 subsystems online${NC}"
-echo -e "    await god.solve('anything') ${CYAN}# Throws everything at it${NC}"
+echo -e "    result = await god.solve('complex problem')"
 echo ""
-echo -e "  ${BOLD}Documentation:${NC} https://github.com/prady4the4bady/pradysagican"
+echo -e "  ${BOLD}🤖 Verify System Health:${NC}"
+echo -e "    pradysagican status         ${CYAN}# Show all 55 subsystems${NC}"
+echo -e "    pradysagican benchmark      ${CYAN}# Run performance tests${NC}"
+echo ""
+echo -e "  ${BOLD}📖 Documentation:${NC} https://github.com/prady4the4bady/pradysagican"
 echo ""

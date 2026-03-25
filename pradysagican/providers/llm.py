@@ -5,6 +5,7 @@ OpenAI-compatible API with automatic fallback.
 """
 from __future__ import annotations
 import logging
+import os
 import time
 from typing import Any
 
@@ -62,9 +63,67 @@ class UniversalLLMProvider:
             except Exception as e:
                 logger.warning("Provider %s failed: %s — trying next", provider_name, e)
                 continue
-        # Final fallback: echo
-        logger.error("All providers failed. Returning echo response.")
-        return f"[PRADYSAGICAN echo — no LLM available] {prompt[:200]}"
+        
+        # All providers failed — provide helpful error instead of misleading echo
+        logger.error("All LLM providers failed or unavailable")
+        return await self._graceful_degradation(prompt)
+    
+    async def _graceful_degradation(self, prompt: str) -> str:
+        """
+        Graceful degradation when all providers fail.
+        Returns helpful error message instead of misleading echo.
+        """
+        configured_providers = [
+            name for name, cfg in self._providers.items() 
+            if cfg.api_key
+        ]
+        
+        if not configured_providers:
+            error_msg = (
+                "❌ No LLM providers configured.\n\n"
+                "PRADYSAGICAN requires an LLM to think. Please configure one:\n\n"
+                "Option 1: Use Free Cloud APIs (fastest):\n"
+                "  - Groq: https://console.groq.com/keys (set GROQ_API_KEY)\n"
+                "  - Together AI: https://api.together.xyz (set TOGETHER_API_KEY)\n"
+                "  - NVIDIA NIM: https://api.nvidia.com (set NVIDIA_API_KEY)\n"
+                "  - HuggingFace: https://huggingface.co/settings/tokens (set HF_TOKEN)\n\n"
+                "Option 2: Use Local Ollama (free, runs locally):\n"
+                "  docker run -d -p 11434:11434 ollama/ollama\n"
+                "  ollama pull llama3.2\n\n"
+                "Then restart the system. Quick start:\n"
+                "  source .venv/bin/activate\n"
+                "  pradysagican chat"
+            )
+        else:
+            error_msg = (
+                f"❌ All configured providers ({', '.join(configured_providers)}) failed.\n\n"
+                "Debugging steps:\n"
+                "1. Check your internet connection\n"
+                "2. Verify API keys are correct:\n"
+            )
+            for name in configured_providers:
+                error_msg += f"     - {name}: {os.getenv(self._get_env_var_for_provider(name), '(not set)')}\n"
+            error_msg += (
+                "3. Check provider status pages:\n"
+                "     - Groq: https://status.groq.com\n"
+                "     - Together AI: https://status.together.xyz\n"
+                "4. Or use local Ollama as fallback:\n"
+                "     docker run -d -p 11434:11434 ollama/ollama && ollama pull llama3.2\n"
+            )
+        
+        logger.error(error_msg)
+        return error_msg
+    
+    def _get_env_var_for_provider(self, provider_name: str) -> str:
+        """Get environment variable name for a provider."""
+        env_map = {
+            "nvidia": "NVIDIA_API_KEY",
+            "groq": "GROQ_API_KEY",
+            "together": "TOGETHER_API_KEY",
+            "huggingface": "HF_TOKEN",
+            "ollama": "OLLAMA_BASE_URL",
+        }
+        return env_map.get(provider_name, "UNKNOWN")
 
     async def chat(self, messages: list[dict[str, str]], model: str | None = None, **kwargs: Any) -> str:
         """Chat-style completion."""

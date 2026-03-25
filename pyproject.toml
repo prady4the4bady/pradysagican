@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "pradysagican"
 version = "6.0.0"
-description = "PRADYSAGICAN — The World's First Super General Intelligence System. 40 subsystems, 21K+ lines, 11.3M features."
+description = "PRADYSAGICAN — The World's First Super General Intelligence System. 55 subsystems, 39K+ lines, 75-90+ features."
 readme = "README.md"
 license = {text = "Proprietary — See LICENSE"}
 requires-python = ">=3.11"
@@ -22,6 +22,7 @@ dependencies = [
     "python-dotenv>=1.0.0",
     "orjson>=3.10.0",
     "psutil>=5.9.0",
+    "pyyaml>=6.0.0",
 ]
 
 [project.optional-dependencies]

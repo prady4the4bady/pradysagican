@@ -177,8 +177,12 @@ class SemanticSpace:
         similarities = []
 
         for concept in self._embeddings.values():
-            dot_product = np.dot(embedding, concept.embedding)
-            similarities.append((concept.concept_id, float(dot_product)))
+            # Normalize the concept embedding
+            concept_norm = concept.embedding / np.linalg.norm(concept.embedding)
+            # Compute cosine similarity and map from [-1, 1] to [0, 1]
+            cosine_sim = float(np.dot(embedding, concept_norm))
+            normalized_sim = (cosine_sim + 1.0) / 2.0  # Map [-1, 1] to [0, 1]
+            similarities.append((concept.concept_id, normalized_sim))
 
         similarities.sort(key=lambda x: x[1], reverse=True)
         return similarities[:limit]

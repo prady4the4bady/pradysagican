@@ -18,6 +18,9 @@ from pradysagican.core.prediction_engine import PredictionEngine, BayesianPredic
 from pradysagican.core.auto_tool_builder import AutoToolBuilder, WebConnector, ToolBlueprint, BuiltTool
 from pradysagican.core.feature_registry import FeatureRegistry, FeatureCategory, Feature
 from pradysagican.core.system_manifest import SystemManifest, ModuleInfo, ConnectionInfo
+from pradysagican.core.prompt_registry import PromptRegistry, PromptVersion
+from pradysagican.core.session_store import SessionStore
+from pradysagican.core.memory_middleware import MemoryMiddleware
 from pradysagican.core.god_powers import (
     DreamEngine, DreamResult, CausalSuperpower, CausalEffect,
     MetaCognitionV2, MetaCognitiveLayer, MultiScaleAttention,
@@ -51,6 +54,8 @@ __all__ = [
     "FeatureRegistry", "FeatureCategory", "Feature",
     # System Manifest
     "SystemManifest", "ModuleInfo", "ConnectionInfo",
+    # Prompt + memory middleware
+    "PromptRegistry", "PromptVersion", "SessionStore", "MemoryMiddleware",
     # God Powers
     "DreamEngine", "DreamResult", "CausalSuperpower", "CausalEffect",
     "MetaCognitionV2", "MetaCognitiveLayer", "MultiScaleAttention",

@@ -10,6 +10,7 @@ from pradysagican.automation.heartbeat import (
     AutoHeartbeat, ScheduledTask, TaskExecutionResult,
     ProactiveAgent, Observation, Anticipation,
 )
+from pradysagican.automation.cron_scheduler import CronScheduler
 
 __all__ = [
     # Gateway
@@ -20,4 +21,6 @@ __all__ = [
     # Heartbeat
     "AutoHeartbeat", "ScheduledTask", "TaskExecutionResult",
     "ProactiveAgent", "Observation", "Anticipation",
+    # Cron Scheduler
+    "CronScheduler",
 ]

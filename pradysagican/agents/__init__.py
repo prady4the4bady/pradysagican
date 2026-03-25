@@ -5,6 +5,13 @@ from pradysagican.agents.strategist import StrategicPlanner, Strategy, SWOTAnaly
 from pradysagican.agents.ethics import EthicsGuardian, EthicalAssessment, Stakeholder, Consequence, BiasReport
 from pradysagican.agents.learner import SelfImprovementEngine, LearningEpisode, SkillTree, Heuristic, SelfModification
 from pradysagican.agents.inventor import InventionEngine, Invention, Hypothesis, InnovationMatrix, ResearchPipeline, PatentAnalyser
+from pradysagican.agents.code_agent import PRADYCodeAgent, AgentOutput
+from pradysagican.agents.contracts import (
+    OrchestratorRequest,
+    StrategistResponse,
+    AgentTaskEnvelope,
+    AgentResultEnvelope,
+)
 
 __all__ = [
     # Stark Core
@@ -19,4 +26,8 @@ __all__ = [
     "SelfImprovementEngine", "LearningEpisode", "SkillTree", "Heuristic", "SelfModification",
     # Inventor
     "InventionEngine", "Invention", "Hypothesis", "InnovationMatrix", "ResearchPipeline", "PatentAnalyser",
+    # Code agent
+    "PRADYCodeAgent", "AgentOutput",
+    # Contracts
+    "OrchestratorRequest", "StrategistResponse", "AgentTaskEnvelope", "AgentResultEnvelope",
 ]

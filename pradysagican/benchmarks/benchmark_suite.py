@@ -15,6 +15,9 @@ from typing import Any
 
 import numpy as np
 
+from pradysagican.benchmarks.artifacts import BenchmarkArtifactLogger
+from pradysagican.config import load_config
+
 logger = logging.getLogger(__name__)
 
 
@@ -275,10 +278,12 @@ class BenchmarkSuite:
     """
 
     def __init__(self, seed: int | None = None) -> None:
+        self._cfg = load_config()
         self._rng = np.random.default_rng(seed)
         self._benchmarks: dict[str, BenchmarkTarget] = {}
         self._results: dict[str, list[BenchmarkResult]] = {}  # name → history
         self._run_count: int = 0
+        self._artifact_logger = BenchmarkArtifactLogger(self._cfg.benchmark_governance.artifact_dir)
 
         for spec in _BENCHMARKS:
             target = BenchmarkTarget(
@@ -291,6 +296,17 @@ class BenchmarkSuite:
                 max_score=spec.get("max_score", 100.0),
             )
             self._benchmarks[target.name] = target
+
+    def _config_snapshot(self, benchmark_name: str) -> dict[str, Any]:
+        return {
+            "benchmark_name": benchmark_name,
+            "mode": self._cfg.benchmark_governance.mode,
+            "seeded_runs": self._run_count,
+            "rollout_stage": self._cfg.upgrades.rollout_stage,
+            "benchmark_mode": self._cfg.upgrades.benchmark_mode,
+            "max_regression": self._cfg.benchmark_governance.max_allowed_regression,
+            "acceptance_threshold": self._cfg.benchmark_governance.acceptance_thresholds.get(benchmark_name, 0.0),
+        }
 
     # ── Run Benchmarks ────────────────────────────────────────────────────
 
@@ -329,7 +345,23 @@ class BenchmarkSuite:
         }
         base = difficulty_map.get(target.category, 0.85)
         noise = float(rng.normal(0, 0.03))
-        score = min(target.max_score, max(0.0, (base + noise) * target.max_score))
+        legacy_score = min(target.max_score, max(0.0, (base + noise) * target.max_score))
+
+        # Simulated upgraded path for shadow/canary/active comparison modes.
+        new_rng_seed = hashlib.sha256(f"{name}:{self._run_count}:new".encode()).digest()
+        new_rng = np.random.default_rng(int.from_bytes(new_rng_seed[:8], "big"))
+        new_noise = float(new_rng.normal(0.01, 0.025))
+        upgraded_score = min(target.max_score, max(0.0, (base + new_noise) * target.max_score))
+
+        mode = self._cfg.benchmark_governance.mode
+        if mode == "baseline":
+            score = legacy_score
+        elif mode == "shadow":
+            score = legacy_score
+        elif mode == "canary":
+            score = (0.75 * legacy_score) + (0.25 * upgraded_score)
+        else:  # active
+            score = upgraded_score
         percentage = round(score / target.max_score * 100, 2)
 
         result = BenchmarkResult(
@@ -343,9 +375,21 @@ class BenchmarkSuite:
                 "best_known": target.current_best_known,
                 "our_target": target.our_target,
                 "gap_to_target": round(target.our_target - percentage, 2),
+                "mode": mode,
+                "legacy_percentage": round((legacy_score / target.max_score) * 100, 2),
+                "upgraded_percentage": round((upgraded_score / target.max_score) * 100, 2),
             },
         )
         self._results.setdefault(name, []).append(result)
+        self._artifact_logger.write(
+            benchmark=name,
+            mode=self._cfg.benchmark_governance.mode,
+            score=result.score,
+            percentage=result.percentage,
+            category=result.category.value,
+            details=result.details,
+            config_snapshot=self._config_snapshot(name),
+        )
         logger.info("Benchmark %s: %.2f%%", name, percentage)
         return result
 
@@ -523,6 +567,49 @@ class BenchmarkSuite:
                 "total_gap": self.gap_analysis()["total_gap"],
                 "critical_benchmarks": self.gap_analysis()["critical_count"],
             },
+        }
+
+    def governance_summary(self) -> dict[str, Any]:
+        """Benchmark-governance snapshot for safe rollout decisions."""
+        benchmarks_run = sum(1 for n in self._benchmarks if n in self._results)
+        total = len(self._benchmarks)
+        latest_scores = [hist[-1].percentage for hist in self._results.values() if hist]
+        overall_mean = round(float(np.mean(np.array(latest_scores))), 2) if latest_scores else 0.0
+        coverage = round((benchmarks_run / max(1, total)) * 100.0, 2)
+
+        accepted = 0
+        checked = 0
+        regressions = 0
+        reg_limit = float(self._cfg.benchmark_governance.max_allowed_regression)
+
+        for name, threshold in self._cfg.benchmark_governance.acceptance_thresholds.items():
+            history = self._results.get(name, [])
+            if not history:
+                continue
+            checked += 1
+            latest = history[-1].percentage
+            if latest >= float(threshold):
+                accepted += 1
+            if len(history) >= 2:
+                drop = history[-2].percentage - latest
+                if drop > reg_limit:
+                    regressions += 1
+
+        acceptance_rate = round((accepted / max(1, checked)) * 100.0, 2)
+        healthy = regressions == 0 and (checked == 0 or accepted == checked)
+        return {
+            "mode": self._cfg.benchmark_governance.mode,
+            "rollout_stage": self._cfg.upgrades.rollout_stage,
+            "benchmarks_run": benchmarks_run,
+            "benchmarks_total": total,
+            "coverage_percent": coverage,
+            "overall_mean_percent": overall_mean,
+            "acceptance_checks_run": checked,
+            "acceptance_checks_passed": accepted,
+            "acceptance_rate_percent": acceptance_rate,
+            "regression_limit_percent": reg_limit,
+            "regressions_over_limit": regressions,
+            "healthy_for_promotion": healthy,
         }
 
     # ── Accessors ─────────────────────────────────────────────────────────

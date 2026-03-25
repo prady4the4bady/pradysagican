@@ -110,6 +110,16 @@ async def test_gap_analysis():
     assert isinstance(gaps, (dict, list))
 
 
+@pytest.mark.asyncio
+async def test_benchmark_governance_summary():
+    bs = BenchmarkSuite()
+    await bs.run_all()
+    summary = bs.governance_summary()
+    assert summary["benchmarks_total"] >= 30
+    assert summary["benchmarks_run"] >= 30
+    assert "healthy_for_promotion" in summary
+
+
 # ── Feature Registry ──────────────────────────────────────────────────────
 
 def test_feature_count_over_million():

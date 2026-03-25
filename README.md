@@ -13,7 +13,8 @@
 
 ![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=flat-square&logo=python&logoColor=white)
 ![License](https://img.shields.io/badge/License-Proprietary-red?style=flat-square)
-![Tests](https://img.shields.io/badge/Tests-171%20passed-brightgreen?style=flat-square)
+![CI](https://github.com/prady4the4bady/pradysagican/actions/workflows/ci.yml/badge.svg)
+![Tests](https://img.shields.io/badge/Tests-181%20passed-brightgreen?style=flat-square)
 ![Subsystems](https://img.shields.io/badge/Subsystems-40%2F40%20online-blue?style=flat-square)
 ![Features](https://img.shields.io/badge/Features-11.3M%2B%20combinations-blueviolet?style=flat-square)
 
@@ -66,7 +67,7 @@ docker run -p 8000:8000 prady4thebady/pradysagican:latest
 ```bash
 make install   # install dependencies
 make run       # start API server
-make test      # run 152 tests
+make test      # run 181 tests
 ```
 
 **pip (editable):**
@@ -85,6 +86,9 @@ pradysagican status     # 40/40 subsystem dashboard
 pradysagican benchmark  # Run 31 benchmarks — live gap analysis
 pradysagican evolve     # Trigger self-evolution cycle (Gödel Agent)
 pradysagican access     # Open-access info / optional profile
+pradysagican upgrade    # Root upgrade tracker (F01-F51 + OMEGA O01-O85)
+pradysagican omega      # OMEGA Part II status probe
+pradysagican godlayer   # God-layer inventions status (151-tool registry + kernels)
 ```
 
 **Provider chain (zero paid APIs required):**

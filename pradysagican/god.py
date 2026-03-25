@@ -189,6 +189,21 @@ class PradysagicanGod:
         self._guardrails = None
         self._sovereign_lock = None
         self._benchmark_suite = None
+        self._memory_middleware = None
+        self._session_store = None
+        self._prompt_registry = None
+        self._code_agent = None
+        self._telegram_gateway = None
+        self._cron_scheduler = None
+        self._upgrade_manager = None
+        self._godlayer_kernel = None
+        self._omega_consciousness_stack = None
+        self._omega_memory_citadel = None
+        self._omega_benchmarker = None
+        self._omega_goal_preservation_lock = None
+        self._omega_hardware_selector = None
+        self._omega_self_operating_computer = None
+        self._omega_metta_runtime = None
 
         # ── Capabilities ────────────────────────────────────────────────
         self._empathy = None
@@ -228,6 +243,9 @@ class PradysagicanGod:
             ("quantum_ready",       "pradysagican.core.quantum_ready",     "QuantumReadyInterface",     (), {}),
             ("feature_registry",    "pradysagican.core.feature_registry",   "FeatureRegistry",           (), {}),
             ("system_manifest",     "pradysagican.core.system_manifest",    "SystemManifest",            (), {"auto_discover": False}),
+            ("memory_middleware",   "pradysagican.core.memory_middleware",  "MemoryMiddleware",          (), {}),
+            ("session_store",       "pradysagican.core.session_store",      "SessionStore",              (), {}),
+            ("prompt_registry",     "pradysagican.core.prompt_registry",    "PromptRegistry",            (), {}),
             # God Powers
             ("dream_engine",        "pradysagican.core.god_powers",         "DreamEngine",               (), {}),
             ("causal",              "pradysagican.core.god_powers",         "CausalSuperpower",          (), {}),
@@ -242,12 +260,25 @@ class PradysagicanGod:
             ("ethics",              "pradysagican.agents.ethics",           "EthicsGuardian",            (), {}),
             ("learner",             "pradysagican.agents.learner",          "SelfImprovementEngine",     (), {}),
             ("inventor",            "pradysagican.agents.inventor",         "InventionEngine",           (), {}),
+            ("code_agent",          "pradysagican.agents.code_agent",       "PRADYCodeAgent",            (), {}),
             # Tools & Safety
             ("nexus",               "pradysagican.tools.nexus",            "NexusToolMaster",           (), {}),
             ("dual_mode",           "pradysagican.safety.dual_mode",       "DualModeController",        (), {}),
             ("guardrails",          "pradysagican.safety.guardrails",      "SafetyGuardrails",          (), {}),
             ("sovereign_lock",      "pradysagican.safety.sovereign_lock",  "SovereignLock",             (), {}),
             ("benchmark_suite",     "pradysagican.benchmarks.benchmark_suite","BenchmarkSuite",          (), {}),
+            ("telegram_gateway",    "pradysagican.gateway.telegram",        "TelegramGateway",           (), {}),
+            ("cron_scheduler",      "pradysagican.automation.cron_scheduler","CronScheduler",           (), {}),
+            ("upgrade_manager",     "pradysagican.upgrades.manager",        "UpgradeManager",            (), {}),
+            ("godlayer_kernel",     "pradysagican.godlayer.kernel",         "GodLayerKernel",            (), {}),
+            # OMEGA extensions
+            ("omega_consciousness_stack", "pradysagican.omega.consciousness_stack", "OmegaConsciousnessStack", (), {}),
+            ("omega_memory_citadel", "pradysagican.omega.memory_citadel", "MemoryCitadelAPI", (), {}),
+            ("omega_benchmarker", "pradysagican.omega.benchmarking", "AutoBenchmarker", (), {}),
+            ("omega_goal_preservation_lock", "pradysagican.omega.safety_net", "GoalPreservationLock", (), {}),
+            ("omega_hardware_selector", "pradysagican.omega.hardware_infra", "HardwareAutoSelect", (), {}),
+            ("omega_self_operating_computer", "pradysagican.omega.computer_control", "SelfOperatingComputer", (), {}),
+            ("omega_metta_runtime", "pradysagican.omega.metta_runtime", "MeTTaRuntime", (), {}),
             # Capabilities (subset — the rest share similar APIs)
             ("empathy",             "pradysagican.capabilities.empathy",    "EmpathyEngine",             (), {}),
             ("intuition",           "pradysagican.capabilities.intuition",  "IntuitionEngine",           (), {}),
@@ -804,14 +835,19 @@ class PradysagicanGod:
             "cognitive_resilience": "core", "temporal_cortex": "core",
             "collective_intelligence": "core", "cognitive_bus": "core",
             "quantum_ready": "core", "feature_registry": "core", "system_manifest": "core",
+            "memory_middleware": "core", "session_store": "core", "prompt_registry": "core",
             "dream_engine": "god_powers", "causal": "god_powers",
             "metacognition": "god_powers", "multiscale": "god_powers",
             "synthesizer": "god_powers", "moral_compass": "god_powers",
             "stark_core": "agents", "orchestrator": "agents", "strategist": "agents",
-            "ethics": "agents", "learner": "agents", "inventor": "agents",
+            "ethics": "agents", "learner": "agents", "inventor": "agents", "code_agent": "agents",
             "nexus": "tools_safety", "dual_mode": "tools_safety",
             "guardrails": "tools_safety", "sovereign_lock": "tools_safety",
-            "benchmark_suite": "tools_safety",
+            "benchmark_suite": "tools_safety", "telegram_gateway": "tools_safety", "cron_scheduler": "tools_safety", "upgrade_manager": "tools_safety",
+            "godlayer_kernel": "tools_safety",
+            "omega_consciousness_stack": "tools_safety", "omega_memory_citadel": "tools_safety", "omega_benchmarker": "tools_safety",
+            "omega_goal_preservation_lock": "tools_safety", "omega_hardware_selector": "tools_safety", "omega_self_operating_computer": "tools_safety",
+            "omega_metta_runtime": "tools_safety",
             "empathy": "capabilities", "intuition": "capabilities",
             "curiosity": "capabilities", "imagination": "capabilities",
         }
@@ -880,6 +916,31 @@ class PradysagicanGod:
                 data["moral_compass"] = {
                     "precedents": len(getattr(self._moral_compass, "_precedents", [])),
                 }
+            except Exception:
+                pass
+
+        if self._upgrade_manager is not None:
+            try:
+                data["upgrades"] = self._upgrade_manager.summary()
+            except Exception:
+                pass
+
+        if self._omega_hardware_selector is not None:
+            try:
+                decision = self._omega_hardware_selector.select()
+                data["omega_hardware"] = {"backend": decision.backend, "reason": decision.reason}
+            except Exception:
+                pass
+
+        if self._omega_memory_citadel is not None:
+            try:
+                data["omega_memory"] = {"tiers": 12, "router": "enabled"}
+            except Exception:
+                pass
+
+        if self._godlayer_kernel is not None:
+            try:
+                data["godlayer"] = self._godlayer_kernel.status()
             except Exception:
                 pass
 

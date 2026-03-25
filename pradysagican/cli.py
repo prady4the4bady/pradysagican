@@ -1,7 +1,7 @@
 """
 PRADYSAGICAN CLI — Beautiful, powerful, simple.
 Usage:  pradysagican <command>
-Commands: serve | chat | status | benchmark | evolve | access | version
+Commands: serve | chat | status | benchmark | evolve | access | upgrade | omega | godlayer | version
 """
 from __future__ import annotations
 import argparse, asyncio, sys, os, time
@@ -10,7 +10,16 @@ def _console():
     from rich.console import Console
     return Console()
 
-BANNER = """[bold cyan]
+def _safe_terminal_text(text: str) -> str:
+    enc = (getattr(sys.stdout, "encoding", None) or "utf-8")
+    try:
+        text.encode(enc)
+        return text
+    except Exception:
+        return text.encode(enc, errors="replace").decode(enc, errors="replace")
+
+
+BANNER = _safe_terminal_text("""[bold cyan]
  ██████╗ ██████╗  █████╗ ██████╗ ██╗   ██╗
  ██╔══██╗██╔══██╗██╔══██╗██╔══██╗╚██╗ ██╔╝
  ██████╔╝██████╔╝███████║██║  ██║ ╚████╔╝
@@ -18,8 +27,8 @@ BANNER = """[bold cyan]
  ██║     ██║  ██║██║  ██║██████╔╝   ██║
  ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝    ╚═╝[/bold cyan]
 [dim]Super General Intelligence System v6.0[/dim]
-[dim]40 subsystems • 22K+ lines • 11.3M features • 152 tests[/dim]
-"""
+[dim]40 subsystems • 22K+ lines • 11.3M features • 181 tests[/dim]
+""")
 
 def cmd_serve(args):
     c = _console()
@@ -48,7 +57,7 @@ def cmd_chat(args):
     c.print(Panel(BANNER, border_style="cyan", padding=(1, 2)))
     t = Table(show_header=False, border_style="dim", box=None, padding=(0, 1))
     t.add_column(style="cyan"); t.add_column(style="white")
-    for cmd, desc in [("/help","Show commands"),("/status","System health"),("/dream <topic>","Creative dreaming"),("/predict <question>","Make prediction"),("/solve <problem>","Full problem solving"),("/tools","List tool categories"),("/access","Open-access info"),("/quit","Exit")]:
+    for cmd, desc in [("/help","Show commands"),("/status","System health"),("/dream <topic>","Creative dreaming"),("/predict <question>","Make prediction"),("/solve <problem>","Full problem solving"),("/tools","List tool categories"),("/access","Open-access info"),("/upgrades","Upgrade tracker"),("/omega","OMEGA status"),("/godlayer","God-layer status"),("/quit","Exit")]:
         t.add_row(cmd, desc)
     c.print(Panel(t, title="[bold]Commands[/bold]", border_style="dim"))
     c.print()
@@ -72,6 +81,36 @@ def cmd_chat(args):
                 s = god.stats(); c.print(Panel(f"[green]Subsystems: {s['system']['subsystems_online']}/{s['system']['subsystems_total']}[/green]\n[cyan]Features: {s['features']['combinatorial_total']:,}[/cyan]\n[yellow]Health: {s['system']['health_pct']}%[/yellow]", title="System Status", border_style="green"))
             elif inp == "/access":
                 c.print(Panel("[bold green]Open access is enabled.[/bold green]\n\nNo payment is required.\n\nOptional profile creation:\n[cyan]pradysagican access --email you@mail.com[/cyan]", title="Access", border_style="green"))
+            elif inp == "/upgrades":
+                from pradysagican.upgrades import UpgradeManager
+                up = UpgradeManager().as_dict()
+                counts = up["summary"]["counts"]
+                omega_counts = up["summary"].get("omega_counts", {})
+                godlayer_inv = up["summary"].get("godlayer_inventory", {})
+                c.print(
+                    Panel(
+                        f"[bold]Rollout:[/bold] {up['summary']['rollout_stage']}\n"
+                        f"[bold]Benchmark mode:[/bold] {up['summary']['benchmark_mode']}\n"
+                        f"[bold]Core Done:[/bold] {counts['done']}  [bold]In progress:[/bold] {counts['in_progress']}  [bold]Planned:[/bold] {counts['planned']}\n"
+                        f"[bold]OMEGA Done:[/bold] {omega_counts.get('done', 0)}  [bold]In progress:[/bold] {omega_counts.get('in_progress', 0)}  [bold]Planned:[/bold] {omega_counts.get('planned', 0)}\n"
+                        f"[bold]God-Layer Tools:[/bold] {godlayer_inv.get('total_tools', 0)}",
+                        title="Upgrade Tracker",
+                        border_style="cyan",
+                    )
+                )
+            elif inp == "/omega":
+                from pradysagican.config import load_config
+                from pradysagican.omega import HardwareAutoSelect
+                cfg = load_config()
+                hw = HardwareAutoSelect().select()
+                c.print(Panel(f"[bold]OMEGA Flags[/bold]\nstack={cfg.upgrades.enable_omega_stack}\nmemory_citadel={cfg.upgrades.enable_omega_memory_citadel}\nsafety_net={cfg.upgrades.enable_omega_safety_net}\nhardware={cfg.upgrades.enable_omega_hardware_control}\nbench_auto={cfg.upgrades.enable_omega_bench_auto}\n\n[bold]Hardware[/bold]\nbackend={hw.backend} ({hw.reason})", title="OMEGA", border_style="magenta"))
+            elif inp == "/godlayer":
+                from pradysagican.config import load_config
+                from pradysagican.godlayer import GodLayerKernel
+                cfg = load_config()
+                kernel = GodLayerKernel()
+                inv = kernel.inventory()
+                c.print(Panel(f"[bold]God-Layer Flags[/bold]\ngodlayer={cfg.upgrades.enable_godlayer_inventions}\nsomnium={cfg.upgrades.enable_somnium_cycle}\ndrift={cfg.upgrades.enable_drift_pipeline}\ntopological={cfg.upgrades.enable_topological_intelligence}\nimmune={cfg.upgrades.enable_immune_self_healing}\nfuture_self={cfg.upgrades.enable_future_self_model}\n\n[bold]Inventory[/bold]\ntotal_tools={inv['total_tools']} systems={inv['systems']} domains={inv['domains']}\nprototype={inv['maturity']['prototype']} planned={inv['maturity']['planned']}", title="God-Layer", border_style="yellow"))
             elif inp == "/tools":
                 from pradysagican.core.task_classifier import TaskCategory
                 tt = Table(title="Task Categories", border_style="cyan")
@@ -135,6 +174,22 @@ def cmd_benchmark(args):
             gap = 100.0 - r.percentage; color = "green" if gap < 5 else "yellow" if gap < 20 else "red"
             t.add_row(r.benchmark_name, f"{r.percentage:.1f}%", "100.0%", f"[{color}]{gap:.1f}%[/{color}]")
         c.print(t)
+        gov = bs.governance_summary()
+        c.print(
+            Panel(
+                f"[bold]Mode:[/bold] {gov['mode']}  [bold]Rollout:[/bold] {gov['rollout_stage']}\n"
+                f"[bold]Coverage:[/bold] {gov['coverage_percent']}% ({gov['benchmarks_run']}/{gov['benchmarks_total']})\n"
+                f"[bold]Acceptance:[/bold] {gov['acceptance_checks_passed']}/{gov['acceptance_checks_run']} "
+                f"({gov['acceptance_rate_percent']}%)\n"
+                f"[bold]Regressions > limit:[/bold] {gov['regressions_over_limit']} "
+                f"(limit={gov['regression_limit_percent']}%)\n"
+                f"[bold]Promotion health:[/bold] "
+                f"[{'green' if gov['healthy_for_promotion'] else 'yellow'}]"
+                f"{'READY' if gov['healthy_for_promotion'] else 'HOLD'}[/]",
+                title="Benchmark Governance",
+                border_style="green" if gov["healthy_for_promotion"] else "yellow",
+            )
+        )
     asyncio.run(_run())
 
 def cmd_access(args):
@@ -162,10 +217,126 @@ def cmd_evolve(args):
         c.print(str(result)[:500])
     asyncio.run(_run())
 
+
+def cmd_upgrade(args):
+    c = _console()
+    from rich.table import Table
+    from rich.panel import Panel
+    from pradysagican.upgrades import UpgradeManager
+
+    up = UpgradeManager().as_dict()
+    counts = up["summary"]["counts"]
+    omega_counts = up["summary"].get("omega_counts", {})
+    godlayer_inv = up["summary"].get("godlayer_inventory", {})
+    c.print(Panel(BANNER, border_style="cyan", padding=(1, 2)))
+    c.print(
+        Panel(
+            f"[bold]Rollout Stage:[/bold] {up['summary']['rollout_stage']}\n"
+            f"[bold]Benchmark Mode:[/bold] {up['summary']['benchmark_mode']}\n"
+            f"[bold]Kill Switch:[/bold] {up['summary']['kill_switch_new_paths']}\n\n"
+            f"Core Done: {counts['done']}  In Progress: {counts['in_progress']}  Planned: {counts['planned']}  Total: {counts['total']}\n"
+            f"OMEGA Done: {omega_counts.get('done', 0)}  In Progress: {omega_counts.get('in_progress', 0)}  Planned: {omega_counts.get('planned', 0)}  Total: {omega_counts.get('total', 0)}\n"
+            f"God-Layer Tools: {godlayer_inv.get('total_tools', 0)}  Systems: {godlayer_inv.get('systems', 0)}  Domains: {godlayer_inv.get('domains', 0)}",
+            title="Upgrade Tracker Status",
+            border_style="green",
+        )
+    )
+
+    t = Table(title="Feature Tracker (F01-F51)", border_style="cyan")
+    t.add_column("ID")
+    t.add_column("Feature")
+    t.add_column("WS")
+    t.add_column("Status")
+    for feat in up["features"]:
+        t.add_row(feat["feature_id"], feat["name"], feat["workstream"], feat["status"])
+    c.print(t)
+
+    ot = Table(title="OMEGA Feature Tracker (O01-O85)", border_style="magenta")
+    ot.add_column("ID")
+    ot.add_column("Feature")
+    ot.add_column("WS")
+    ot.add_column("Status")
+    for feat in up.get("omega_features", []):
+        ot.add_row(feat["feature_id"], feat["name"], feat["workstream"], feat["status"])
+    c.print(ot)
+
+
+def cmd_omega(args):
+    c = _console()
+    from rich.panel import Panel
+    from pradysagican.config import load_config
+    from pradysagican.omega import HardwareAutoSelect, MemoryCitadelAPI, OmegaConsciousnessStack
+
+    cfg = load_config()
+    hw = HardwareAutoSelect().select()
+    omega_stack = OmegaConsciousnessStack()
+    omega_mem = MemoryCitadelAPI()
+    probe = omega_stack.update(
+        specialists=["reasoning", "memory"],
+        surprises=["novel_task"],
+        phi=0.6,
+        gw_ignition_rate=0.7,
+        prediction_error_entropy=0.3,
+        self_model="self-model evaluating itself",
+    )
+    mem_probe = omega_mem.store("what happened yesterday", {"event": "omega_probe"})
+    c.print(Panel(BANNER, border_style="cyan", padding=(1, 2)))
+    c.print(Panel(f"[bold]OMEGA Flags[/bold]\nstack={cfg.upgrades.enable_omega_stack}\nmemory_citadel={cfg.upgrades.enable_omega_memory_citadel}\nsafety_net={cfg.upgrades.enable_omega_safety_net}\nhardware={cfg.upgrades.enable_omega_hardware_control}\nbench_auto={cfg.upgrades.enable_omega_bench_auto}\n\n[bold]Hardware[/bold]\nbackend={hw.backend} ({hw.reason})\n\n[bold]Consciousness Probe[/bold]\nc_score={probe['c_score']} strange_loop={probe['strange_loop']} elevate={probe['elevation_triggered']}\n\n[bold]Memory Probe[/bold]\ntier={mem_probe['tier']} stored={mem_probe['stored']}", title="OMEGA Status", border_style="magenta"))
+
+
+def cmd_godlayer(args):
+    c = _console()
+    from rich.panel import Panel
+    from pradysagican.config import load_config
+    from pradysagican.godlayer import GodLayerKernel, GodLayerOmega2Runtime
+
+    cfg = load_config()
+    kernel = GodLayerKernel()
+    omega2 = GodLayerOmega2Runtime(kernel=kernel)
+    inv = kernel.inventory()
+    somnium_probe = kernel.run_somnium_cycle(
+        events=[{"event": "resolved retrieval conflict"}, {"event": "detected topology gap"}],
+        awake_hours=10.0,
+        local_hour=3,
+        idle_minutes=60,
+    )
+    future_probe = kernel.project_future(
+        current_scores={"SWE-Bench": 35.0, "GPQA": 55.0},
+        daily_improvement=0.15,
+        days=30,
+        intent="improve benchmark performance safely",
+    )
+    cycle_probe = omega2.run_cycle_tick()
+    c.print(Panel(BANNER, border_style="cyan", padding=(1, 2)))
+    c.print(
+        Panel(
+            f"[bold]God-Layer Flags[/bold]\n"
+            f"godlayer={cfg.upgrades.enable_godlayer_inventions}\n"
+            f"somnium={cfg.upgrades.enable_somnium_cycle}\n"
+            f"drift={cfg.upgrades.enable_drift_pipeline}\n"
+            f"topological={cfg.upgrades.enable_topological_intelligence}\n"
+            f"immune={cfg.upgrades.enable_immune_self_healing}\n"
+            f"future_self={cfg.upgrades.enable_future_self_model}\n\n"
+            f"[bold]Inventory[/bold]\n"
+            f"total_tools={inv['total_tools']} systems={inv['systems']} domains={inv['domains']}\n"
+            f"prototype={inv['maturity']['prototype']} planned={inv['maturity']['planned']}\n\n"
+            f"[bold]Somnium Probe[/bold]\n"
+            f"phase={somnium_probe['phase']} semantic_rules={somnium_probe['semantic_rules']}\n\n"
+            f"[bold]Future Probe[/bold]\n"
+            f"projection_keys={list(future_probe['projection'].keys())}\n\n"
+            f"[bold]OMEGA-2 Root[/bold]\n"
+            f"window={cycle_probe['window']['window']} "
+            f"primary_bus={cycle_probe['window']['primary_bus']} "
+            f"active_outputs={list(cycle_probe['outputs'].keys())}",
+            title="God-Layer Status",
+            border_style="yellow",
+        )
+    )
+
 def cmd_version(args):
     c = _console()
     from rich.panel import Panel
-    c.print(Panel(f"{BANNER}\n[bold]Version:[/bold] 6.0.0\n[bold]Python:[/bold] {sys.version.split()[0]}\n[bold]Lines:[/bold] 22,000+\n[bold]Modules:[/bold] 50+\n[bold]Classes:[/bold] 280+\n[bold]Tests:[/bold] 152 passing\n[bold]Features:[/bold] 11,300,000+\n[bold]Subsystems:[/bold] 40\n[bold]Benchmarks:[/bold] 31\n[bold]Author:[/bold] Prady\n[bold]License:[/bold] Proprietary", title="PRADYSAGICAN", border_style="cyan"))
+    c.print(Panel(f"{BANNER}\n[bold]Version:[/bold] 6.0.0\n[bold]Python:[/bold] {sys.version.split()[0]}\n[bold]Lines:[/bold] 22,000+\n[bold]Modules:[/bold] 50+\n[bold]Classes:[/bold] 280+\n[bold]Tests:[/bold] 181 passing\n[bold]Features:[/bold] 11,300,000+\n[bold]Subsystems:[/bold] 40\n[bold]Benchmarks:[/bold] 31\n[bold]Author:[/bold] Prady\n[bold]License:[/bold] Proprietary", title="PRADYSAGICAN", border_style="cyan"))
 
 def main():
     parser = argparse.ArgumentParser(prog="pradysagican", description="PRADYSAGICAN — Super General Intelligence System")
@@ -176,9 +347,12 @@ def main():
     sub.add_parser("benchmark", help="Run all 31 benchmarks")
     sub.add_parser("evolve", help="Run self-evolution cycle")
     p_access = sub.add_parser("access", help="Show open-access info / optional profile"); p_access.add_argument("--email"); p_access.add_argument("--role", default="default", help="Profile role label")
+    sub.add_parser("upgrade", help="Show upgrade tracker status")
+    sub.add_parser("omega", help="Show OMEGA advanced stack status")
+    sub.add_parser("godlayer", help="Show God-layer invented systems status")
     sub.add_parser("version", help="Show version info")
     args = parser.parse_args()
-    dispatch = {"serve": cmd_serve, "chat": cmd_chat, "status": cmd_status, "benchmark": cmd_benchmark, "evolve": cmd_evolve, "access": cmd_access, "version": cmd_version}
+    dispatch = {"serve": cmd_serve, "chat": cmd_chat, "status": cmd_status, "benchmark": cmd_benchmark, "evolve": cmd_evolve, "access": cmd_access, "upgrade": cmd_upgrade, "omega": cmd_omega, "godlayer": cmd_godlayer, "version": cmd_version}
     fn = dispatch.get(args.command)
     if fn: fn(args)
     else: parser.print_help()

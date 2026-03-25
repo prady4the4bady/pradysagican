@@ -137,7 +137,7 @@ class SystemManifest:
 
                 # Count lines
                 try:
-                    with open(file_path) as fh:
+                    with open(file_path, encoding="utf-8", errors="replace") as fh:
                         line_count = sum(1 for _ in fh)
                 except OSError:
                     line_count = 0

@@ -122,6 +122,62 @@ class SafetyConfig(BaseModel):
     sovereign_auth_required_parties: int = 3  # Multi-party auth
 
 
+class BenchmarkGovernanceConfig(BaseModel):
+    """Benchmark rollout and regression guardrails."""
+
+    mode: str = os.getenv("PRADY_BENCHMARK_MODE", "baseline")  # baseline|shadow|canary|active
+    artifact_dir: str = os.getenv(
+        "PRADY_BENCHMARK_ARTIFACT_DIR",
+        str(Path(os.getenv("PRADYSAGICAN_DATA", "./data")) / "benchmarks" / "artifacts"),
+    )
+    acceptance_thresholds: dict[str, float] = Field(
+        default_factory=lambda: {
+            "SWE_Bench_Verified": float(os.getenv("PRADY_GATE_SWE", "0.0")),
+            "Terminal_Bench": float(os.getenv("PRADY_GATE_TERMINAL", "0.0")),
+            "ARC_AGI_2": float(os.getenv("PRADY_GATE_ARC", "0.0")),
+            "GPQA_Diamond": float(os.getenv("PRADY_GATE_GPQA", "0.0")),
+            "HLE": float(os.getenv("PRADY_GATE_HLE", "0.0")),
+        }
+    )
+    max_allowed_regression: float = float(os.getenv("PRADY_MAX_REGRESSION", "0.5"))
+
+
+class UpgradeConfig(BaseModel):
+    """Feature flags and rollout stages for non-breaking root upgrades."""
+    enable_upgrades_global: bool = os.getenv("PRADY_ENABLE_UPGRADES", "true").lower() == "true"
+    force_legacy_provider: bool = os.getenv("PRADY_FORCE_LEGACY_PROVIDER", "false").lower() == "true"
+    force_legacy_tools: bool = os.getenv("PRADY_FORCE_LEGACY_TOOLS", "false").lower() == "true"
+    force_legacy_memory: bool = os.getenv("PRADY_FORCE_LEGACY_MEMORY", "false").lower() == "true"
+    kill_switch_new_paths: bool = os.getenv("PRADY_KILL_SWITCH_NEW_PATHS", "false").lower() == "true"
+    enable_mcp: bool = os.getenv("PRADY_ENABLE_MCP", "false").lower() == "true"
+    enable_crawl4ai: bool = os.getenv("PRADY_ENABLE_CRAWL4AI", "false").lower() == "true"
+    enable_e2b: bool = os.getenv("PRADY_ENABLE_E2B", "false").lower() == "true"
+    enable_mem0: bool = os.getenv("PRADY_ENABLE_MEM0", "false").lower() == "true"
+    enable_litellm_router: bool = os.getenv("PRADY_ENABLE_LITELLM_ROUTER", "false").lower() == "true"
+    enable_code_agent: bool = os.getenv("PRADY_ENABLE_CODE_AGENT", "false").lower() == "true"
+    enable_prompt_versioning: bool = os.getenv("PRADY_ENABLE_PROMPT_VERSIONING", "false").lower() == "true"
+    enable_telemetry: bool = os.getenv("PRADY_ENABLE_TELEMETRY", "true").lower() == "true"
+    enable_telegram_gateway: bool = os.getenv("PRADY_ENABLE_TELEGRAM_GATEWAY", "false").lower() == "true"
+    enable_cron_scheduler: bool = os.getenv("PRADY_ENABLE_CRON_SCHEDULER", "false").lower() == "true"
+    enable_omega_stack: bool = os.getenv("PRADY_ENABLE_OMEGA_STACK", "false").lower() == "true"
+    enable_omega_memory_citadel: bool = os.getenv("PRADY_ENABLE_OMEGA_MEMORY_CITADEL", "false").lower() == "true"
+    enable_omega_safety_net: bool = os.getenv("PRADY_ENABLE_OMEGA_SAFETY_NET", "false").lower() == "true"
+    enable_omega_hardware_control: bool = os.getenv("PRADY_ENABLE_OMEGA_HARDWARE", "false").lower() == "true"
+    enable_omega_bench_auto: bool = os.getenv("PRADY_ENABLE_OMEGA_BENCH_AUTO", "false").lower() == "true"
+    enable_godlayer_inventions: bool = os.getenv("PRADY_ENABLE_GODLAYER", "false").lower() == "true"
+    enable_somnium_cycle: bool = os.getenv("PRADY_ENABLE_SOMNIUM", "false").lower() == "true"
+    enable_drift_pipeline: bool = os.getenv("PRADY_ENABLE_DRIFT", "false").lower() == "true"
+    enable_topological_intelligence: bool = os.getenv("PRADY_ENABLE_TOPOLOGICAL_INTEL", "false").lower() == "true"
+    enable_immune_self_healing: bool = os.getenv("PRADY_ENABLE_IMMUNE_HEALING", "false").lower() == "true"
+    enable_future_self_model: bool = os.getenv("PRADY_ENABLE_FUTURE_SELF", "false").lower() == "true"
+    benchmark_mode: str = os.getenv("PRADY_BENCHMARK_MODE", "baseline")  # baseline|shadow|canary|active
+    benchmark_artifact_dir: str = os.getenv(
+        "PRADY_BENCHMARK_ARTIFACT_DIR",
+        str(Path(os.getenv("PRADYSAGICAN_DATA", "./data")) / "benchmarks" / "artifacts"),
+    )
+    rollout_stage: str = os.getenv("PRADY_ROLLOUT_STAGE", "off")  # off|shadow|canary|default_on
+
+
 # ── Benchmark Targets ─────────────────────────────────────────────────────────
 
 BENCHMARK_TARGETS: dict[str, dict[str, Any]] = {
@@ -155,6 +211,8 @@ class PradysagicanConfig(BaseModel):
     ])
     memory: MemoryConfig = Field(default_factory=MemoryConfig)
     safety: SafetyConfig = Field(default_factory=SafetyConfig)
+    benchmark_governance: BenchmarkGovernanceConfig = Field(default_factory=BenchmarkGovernanceConfig)
+    upgrades: UpgradeConfig = Field(default_factory=UpgradeConfig)
     data_dir: Path = Field(default_factory=lambda: Path(
         os.getenv("PRADYSAGICAN_DATA", "./data")
     ))

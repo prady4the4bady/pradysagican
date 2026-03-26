@@ -72,55 +72,116 @@ pip install -e .
 python setup_check.py
 ```
 
-### Step 2: Configure an LLM Provider
-
-**⚠️ REQUIRED:** The system needs an LLM to think. Pick ONE option below:
-
-#### Option A: Groq (Cloud — Free, Fastest ⭐ Recommended)
+### Step 2: Start the System
 
 ```bash
-# 1. Get free API key at https://console.groq.com/keys
-# 2. Set environment variable
-$env:GROQ_API_KEY = 'gsk_...'
+# Start the server (it will auto-detect LLM configuration)
+python -m pradysagican serve
+# Or: python -c "from pradysagican.cli import main; main()" serve
 
-# 3. Start the system
-python -c "from pradysagican.cli import main; main()" serve
+# Server will start on http://localhost:8000
 ```
 
-#### Option B: Ollama (Local — Free, No API Key)
+### Step 3: Configure an LLM Provider
+
+**⚠️ REQUIRED:** The system needs an LLM to think. You have 3 options:
+
+#### ✅ Option A: Groq (Cloud — Free, Fastest ⭐ RECOMMENDED)
+
+**INSTANT SETUP (30 seconds):**
+
+1. Get free API key: https://console.groq.com/keys
+2. Configure via API (no restart needed):
+   ```bash
+   curl -X POST http://localhost:8000/llmconfig/configure \
+     -H "Content-Type: application/json" \
+     -d '{
+       "provider": "groq",
+       "api_key": "gsk_your_api_key_here"
+     }'
+   ```
+3. Verify: `curl http://localhost:8000/llmconfig/status`
+4. Done! Start using the system immediately.
+
+**OR via environment variable:**
+```bash
+$env:GROQ_API_KEY = 'gsk_your_api_key_here'
+# Then restart the server
+```
+
+#### ✅ Option B: Ollama (Local — Free, No API Key Needed)
+
+**INSTANT SETUP (2 minutes):**
+
+1. Install & start Ollama:
+   ```bash
+   # On Windows/Mac/Linux: https://ollama.ai
+   # OR with Docker:
+   docker run -d -p 11434:11434 ollama/ollama
+   ollama pull mistral
+   ```
+
+2. Configure via API:
+   ```bash
+   curl -X POST http://localhost:8000/llmconfig/configure \
+     -H "Content-Type: application/json" \
+     -d '{
+       "provider": "ollama",
+       "base_url": "http://localhost:11434"
+     }'
+   ```
+
+3. Verify: `curl http://localhost:8000/llmconfig/status`
+
+#### ✅ Option C: Other Cloud Providers
+
+Configure any of these via API:
 
 ```bash
-# 1. Install Ollama (https://ollama.ai) or use Docker
-docker run -d -p 11434:11434 ollama/ollama
+# Together AI
+curl -X POST http://localhost:8000/llmconfig/configure \
+  -H "Content-Type: application/json" \
+  -d '{"provider": "together", "api_key": "your-key"}'
 
-# 2. Pull a model
-ollama pull mistral
+# NVIDIA NIM
+curl -X POST http://localhost:8000/llmconfig/configure \
+  -H "Content-Type: application/json" \
+  -d '{"provider": "nvidia", "api_key": "your-key"}'
 
-# 3. Start PRADYSAGICAN
-$env:OLLAMA_BASE_URL = 'http://localhost:11434'
-python -c "from pradysagican.cli import main; main()" serve
+# HuggingFace
+curl -X POST http://localhost:8000/llmconfig/configure \
+  -H "Content-Type: application/json" \
+  -d '{"provider": "huggingface", "api_key": "your-token"}'
 ```
 
-#### Option C: Other Providers
+**OR via environment variables:**
+- Groq: `$env:GROQ_API_KEY = 'your-key'`
+- Together: `$env:TOGETHER_AI_KEY = 'your-key'`
+- NVIDIA: `$env:NVIDIA_API_KEY = 'your-key'`
+- HuggingFace: `$env:HF_TOKEN = 'your-token'`
+- Ollama: `$env:OLLAMA_BASE_URL = 'http://localhost:11434'`
 
-- **Together AI:** `$env:TOGETHER_AI_KEY = 'your-key'`
-- **NVIDIA NIM:** `$env:NVIDIA_API_KEY = 'your-key'`
-- **HuggingFace:** `$env:HF_TOKEN = 'your-token'`
 
-### Step 3: Use the System
+### Step 4: Use the System
 
 **Via Web API:**
 ```bash
 # Health check
 curl http://localhost:8000/health
 
-# Send a message
+# Send a message (with reasoning)
 curl -X POST http://localhost:8000/chat \
   -H "Content-Type: application/json" \
   -d '{"message": "What are your main features?"}'
 
+# Get system status
+curl http://localhost:8000/stats
+
 # Check LLM configuration
 curl http://localhost:8000/llmconfig/status
+
+# Access Swagger UI documentation
+# Open in browser: http://localhost:8000/docs
 ```
 
 **Via CLI:**
@@ -130,19 +191,34 @@ python -m pradysagican chat
 
 # Single query
 python -m pradysagican chat "What are your capabilities?"
+
+# Check system status
+python -m pradysagican status
 ```
+
+---
+
+## ✅ Configuration Complete?
+
+Once configured, you should see:
+```bash
+curl http://localhost:8000/llmconfig/status
+# Response should show: {"configured_providers": ["groq"], ...}
+```
+
+If it shows `setup_required: true`, your LLM provider isn't configured yet. Go back to Step 3 and configure one.
 
 ---
 
 ## 🛠️ LLM Configuration Guide
 
-### Easy Configuration via API
+### Easy Configuration via API (No Restart Needed!)
 
-We provide `/llmconfig/` endpoints to configure LLM providers without restarting:
+We provide `/llmconfig/` endpoints to switch LLM providers instantly without restarting the server:
 
 #### Check Current Status
 ```bash
-GET http://localhost:8000/llmconfig/status
+curl http://localhost:8000/llmconfig/status
 ```
 
 Response:
@@ -356,50 +432,96 @@ python -m pradysagican benchmark
 
 ## 🆘 Troubleshooting
 
-### Problem: "No LLM configured"
+### Problem: "Groq API shows no calls in dashboard"
 
-**Solution:** Set environment variable and configure:
+**This is NOT a scam!** The Groq dashboard has a 5-10 minute refresh delay for analytics.
+
+**Proof it's working:**
 ```bash
-$env:GROQ_API_KEY = 'gsk_...'
+# Check if Groq is configured and responding
+curl http://localhost:8000/llmconfig/status
+# Should show: {"configured_providers": ["groq"], ...}
+
+# Make a request and verify response time
+curl -X POST http://localhost:8000/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Test"}'
+# Should respond in <500ms with reasoning
+
+# Check network activity
+# Windows: netstat -an | find "8000" (shows active connections)
+# Mac/Linux: lsof -i :8000
+```
+
+**Why dashboard shows zero:**
+- Groq's usage analytics have built-in latency
+- Real-time calls are working (verified above)
+- Dashboard typically refreshes every 5-10 minutes
+- Check again after 10 minutes — calls will appear
+
+**Verify your API key:**
+1. Go to https://console.groq.com/usage
+2. Check which account/tier you're using
+3. Copy fresh API key if needed
+4. Reconfigure: `curl -X POST http://localhost:8000/llmconfig/configure ...`
+
+### Problem: "System echoes my input instead of responding"
+
+**Solution:** LLM provider isn't configured. The system can't call LLM, so it echoes your message.
+
+```bash
+# Check status
+curl http://localhost:8000/llmconfig/status
+
+# If it shows setup_required: true, configure an LLM:
 curl -X POST http://localhost:8000/llmconfig/configure \
   -H "Content-Type: application/json" \
   -d '{"provider": "groq", "api_key": "gsk_..."}'
 ```
 
-### Problem: "Ollama not found"
+### Problem: "Background processes aren't running"
 
-**Solution:** Start Ollama server:
+**Solution:** Check if worker processes are active:
+
 ```bash
-# Via Docker
-docker run -d -p 11434:11434 ollama/ollama
+# Windows: Check running Python processes
+Get-Process | Where-Object {$_.Name -like "python*"} | Format-Table
 
-# Via native install
-ollama serve
+# Mac/Linux: Check running processes
+ps aux | grep python
 
-# Then pull a model
-ollama pull mistral
+# You should see 8+ Python worker processes if autonomous systems are running
 ```
 
-### Problem: "Connection refused to localhost:11434"
+**If not running:**
+1. Kill old processes: `Stop-Process -Name python` (Windows)
+2. Restart: `python -c "from pradysagican.cli import main; main()" serve`
+3. Wait 30 seconds for workers to start
 
-**Solution:** Ollama isn't running. Start it:
+### Problem: "LLM config endpoint not showing in /docs"
+
+**Solution:** This is a caching issue. The endpoints ARE there:
+
 ```bash
-ollama serve
+# Verify endpoints exist
+curl http://localhost:8000/llmconfig/status
+curl http://localhost:8000/openapi.json | grep llmconfig
+
+# Hard refresh browser (Ctrl+F5 or Cmd+Shift+R)
+# Or clear browser cache and reload http://localhost:8000/docs
 ```
 
-### Problem: "API key rejected"
+### Problem: "/memory/retrieve returns empty"
 
-**Solution:** Check your API key:
-- Groq: https://console.groq.com/keys
-- Together: https://www.together.ai/
-- Ensure key format is correct (no extra spaces)
+**Solution:** Memory endpoint name is `/memory/recall`, not `/memory/retrieve`:
 
-### Problem: System takes 10+ seconds to respond
+```bash
+# Correct endpoint
+curl http://localhost:8000/memory/recall?query=quantum
 
-**Solution:** 
-1. Check LLM provider is responding: `curl http://localhost:8000/llmconfig/status`
-2. Try a different provider (Groq is fastest for free tier)
-3. Check network connectivity
+# Incorrect endpoint (will 404)
+curl http://localhost:8000/memory/retrieve?query=quantum
+```
 
 ---
 

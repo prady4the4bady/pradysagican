@@ -98,6 +98,21 @@ class GodLayerSomniumRequest(BaseModel):
     local_hour: int = 3
     idle_minutes: int = 0
 
+class LLMConfigRequest(BaseModel):
+    """Configure LLM provider"""
+    provider: str  # "groq", "ollama", "together", "nvidia", "huggingface"
+    api_key: str | None = None  # For cloud providers
+    base_url: str | None = None  # For local providers like Ollama
+    model: str | None = None  # Model name (e.g., "mistral", "llama2")
+
+class LLMConfigResponse(BaseModel):
+    """LLM configuration status"""
+    status: str  # "success", "error"
+    message: str
+    provider: str
+    configured_providers: list[str]
+    active_provider: str
+
 
 class GodLayerFutureRequest(BaseModel):
     current_scores: dict[str, float]
@@ -310,7 +325,180 @@ async def godlayer_immune_check(req: GodLayerImmuneRequest):
         uncertainty=req.uncertainty,
     )
 
-def main():
+# ── LLM Configuration Endpoints ───────────────────────────────────────────────
+
+@app.get("/llmconfig/status", tags=["LLM Configuration"])
+async def get_llm_status():
+    """Get current LLM provider status and available options"""
+    import os
+    configured = []
+    
+    if os.getenv("GROQ_API_KEY"):
+        configured.append("groq")
+    if os.getenv("TOGETHER_AI_KEY"):
+        configured.append("together")
+    if os.getenv("NVIDIA_API_KEY"):
+        configured.append("nvidia")
+    if os.getenv("HF_TOKEN"):
+        configured.append("huggingface")
+    
+    # Check if Ollama is running
+    try:
+        import httpx
+        async with httpx.AsyncClient() as client:
+            await client.get("http://localhost:11434/api/tags", timeout=2.0)
+        configured.append("ollama")
+    except:
+        pass
+    
+    return {
+        "configured_providers": configured,
+        "available_providers": ["groq", "together", "nvidia", "huggingface", "ollama"],
+        "setup_required": len(configured) == 0,
+        "message": "No LLM configured! Use POST /llmconfig/configure to set one up." if not configured else f"✅ {len(configured)} provider(s) configured"
+    }
+
+@app.post("/llmconfig/configure", tags=["LLM Configuration"])
+async def configure_llm(req: LLMConfigRequest) -> LLMConfigResponse:
+    """Configure an LLM provider for the system
+    
+    Examples:
+    - Groq: {"provider": "groq", "api_key": "gsk_..."}
+    - Ollama: {"provider": "ollama", "base_url": "http://localhost:11434", "model": "mistral"}
+    - Together: {"provider": "together", "api_key": "..."}
+    - NVIDIA: {"provider": "nvidia", "api_key": "..."}
+    - HuggingFace: {"provider": "huggingface", "api_key": "..."}
+    """
+    import os
+    
+    provider_lower = req.provider.lower()
+    configured = []
+    
+    try:
+        if provider_lower == "groq":
+            if not req.api_key:
+                return LLMConfigResponse(
+                    status="error",
+                    message="❌ Groq API key required. Get one at https://console.groq.com/keys",
+                    provider="groq",
+                    configured_providers=[],
+                    active_provider="none"
+                )
+            os.environ["GROQ_API_KEY"] = req.api_key
+            configured.append("groq")
+            return LLMConfigResponse(
+                status="success",
+                message="✅ Groq configured successfully! Restart the server to use it.",
+                provider="groq",
+                configured_providers=configured,
+                active_provider="groq"
+            )
+        
+        elif provider_lower == "ollama":
+            base_url = req.base_url or "http://localhost:11434"
+            model = req.model or "mistral"
+            
+            # Check if Ollama is running
+            try:
+                import httpx
+                async with httpx.AsyncClient() as client:
+                    await client.get(f"{base_url}/api/tags", timeout=2.0)
+            except:
+                return LLMConfigResponse(
+                    status="error",
+                    message=f"❌ Ollama not running at {base_url}\n\nStart it with:\n  ollama serve\n\nThen pull a model:\n  ollama pull {model}",
+                    provider="ollama",
+                    configured_providers=[],
+                    active_provider="none"
+                )
+            
+            os.environ["OLLAMA_BASE_URL"] = base_url
+            os.environ["OLLAMA_MODEL"] = model
+            configured.append("ollama")
+            return LLMConfigResponse(
+                status="success",
+                message=f"✅ Ollama configured successfully!\n   URL: {base_url}\n   Model: {model}\n\nRestart the server to use it.",
+                provider="ollama",
+                configured_providers=configured,
+                active_provider="ollama"
+            )
+        
+        elif provider_lower == "together":
+            if not req.api_key:
+                return LLMConfigResponse(
+                    status="error",
+                    message="❌ Together AI API key required.",
+                    provider="together",
+                    configured_providers=[],
+                    active_provider="none"
+                )
+            os.environ["TOGETHER_AI_KEY"] = req.api_key
+            configured.append("together")
+            return LLMConfigResponse(
+                status="success",
+                message="✅ Together AI configured successfully! Restart the server to use it.",
+                provider="together",
+                configured_providers=configured,
+                active_provider="together"
+            )
+        
+        elif provider_lower == "nvidia":
+            if not req.api_key:
+                return LLMConfigResponse(
+                    status="error",
+                    message="❌ NVIDIA NIM API key required.",
+                    provider="nvidia",
+                    configured_providers=[],
+                    active_provider="none"
+                )
+            os.environ["NVIDIA_API_KEY"] = req.api_key
+            configured.append("nvidia")
+            return LLMConfigResponse(
+                status="success",
+                message="✅ NVIDIA NIM configured successfully! Restart the server to use it.",
+                provider="nvidia",
+                configured_providers=configured,
+                active_provider="nvidia"
+            )
+        
+        elif provider_lower == "huggingface":
+            if not req.api_key:
+                return LLMConfigResponse(
+                    status="error",
+                    message="❌ HuggingFace token required.",
+                    provider="huggingface",
+                    configured_providers=[],
+                    active_provider="none"
+                )
+            os.environ["HF_TOKEN"] = req.api_key
+            configured.append("huggingface")
+            return LLMConfigResponse(
+                status="success",
+                message="✅ HuggingFace configured successfully! Restart the server to use it.",
+                provider="huggingface",
+                configured_providers=configured,
+                active_provider="huggingface"
+            )
+        
+        else:
+            return LLMConfigResponse(
+                status="error",
+                message=f"❌ Unknown provider: {provider_lower}\n\nSupported: groq, ollama, together, nvidia, huggingface",
+                provider=provider_lower,
+                configured_providers=[],
+                active_provider="none"
+            )
+    
+    except Exception as e:
+        return LLMConfigResponse(
+            status="error",
+            message=f"❌ Configuration failed: {str(e)}",
+            provider=provider_lower,
+            configured_providers=configured,
+            active_provider="none"
+        )
+
+
     import uvicorn
     uvicorn.run("pradysagican.api.server:app", host="0.0.0.0", port=8000, reload=True)
 

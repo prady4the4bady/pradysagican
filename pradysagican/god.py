@@ -742,13 +742,22 @@ class PradysagicanGod:
         self._call_count += 1
         result = SolveResult(problem=problem)
 
-        # 1. Decompose via orchestrator
-        if self._orchestrator is not None:
-            try:
-                tasks = await self._orchestrator.decompose(problem, max_tasks=6)
-                result.decomposition = [getattr(t, "description", str(t)) for t in tasks]
-            except Exception:
-                result.decomposition = [problem]
+        # 1. Decompose problem into sub-problems
+        # Simple text-based decomposition since orchestrator.decompose() doesn't exist
+        try:
+            words = problem.split()
+            # Create sub-problems by breaking at punctuation/keywords
+            sub_problems = []
+            if "and" in problem.lower():
+                sub_problems = problem.lower().split(" and ")
+            elif "or" in problem.lower():
+                sub_problems = problem.lower().split(" or ")
+            else:
+                # Simple chunking
+                sub_problems = [problem]
+            result.decomposition = [p.strip() for p in sub_problems if p.strip()]
+        except Exception:
+            result.decomposition = [problem]
 
         # 2. Reason through each sub-problem
         if self._reasoning is not None:
@@ -783,12 +792,23 @@ class PradysagicanGod:
             except Exception:
                 pass
 
-        # 5. Causal root-cause analysis
+        # 5. Causal identification and effect analysis
         if self._causal is not None:
             try:
-                root = await self._causal.find_root_cause(problem, depth=3)
-                if root and isinstance(root, list):
-                    result.reasoning_trace.extend([f"Root cause: {str(r)}" for r in root[:2]])
+                # Try to extract treatment/outcome from problem
+                words = problem.split()
+                if len(words) >= 2:
+                    treatment = words[0]
+                    outcome = words[-1]
+                    # Use available causal methods
+                    try:
+                        identification = self._causal.identify_effect(treatment, outcome)
+                        if identification and hasattr(identification, 'is_identifiable'):
+                            method_str = getattr(identification, 'identification_method', 'unknown')
+                            confounders = getattr(identification, 'confounders', [])
+                            result.reasoning_trace.append(f"Causal analysis: {method_str} method. Confounders: {confounders}")
+                    except Exception:
+                        pass
             except Exception:
                 pass
 

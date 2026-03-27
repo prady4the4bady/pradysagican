@@ -121,17 +121,70 @@ def cmd_chat(args):
                 c.print(tt)
             else:
                 task = classifier.classify(inp)
-                c.print(f"[dim]Category: {task.category.value} | Complexity: {task.complexity.value} | Pipeline: {task.pipeline_name}[/dim]")
-                with c.status(f"[cyan]Thinking ({task.pipeline_name})...[/cyan]"):
+                # Beautiful header with task classification
+                c.print(f"\n[bold cyan]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/bold cyan]")
+                c.print(f"[cyan]📊 Task Analysis[/cyan]")
+                c.print(f"[bold]Category:[/bold] {task.category.value}")
+                c.print(f"[bold]Complexity:[/bold] {task.complexity.value}")
+                c.print(f"[bold]Pipeline:[/bold] {task.pipeline_name}")
+                c.print(f"[bold cyan]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/bold cyan]\n")
+                
+                with c.status(f"[cyan]⏳ Processing with {task.pipeline_name}...[/cyan]"):
                     if inp.startswith("/dream "): result = await god.dream(inp[7:].split(","))
                     elif inp.startswith("/predict "): result = await god.predict(inp[9:])
                     elif inp.startswith("/solve "): result = await god.solve(inp[7:])
                     else: result = await god.think(inp)
-                if isinstance(result, dict): text = result.get("answer", result.get("conclusion", str(result)))
-                elif hasattr(result, "answer"): text = result.answer
-                elif hasattr(result, "conclusion"): text = result.conclusion
-                else: text = str(result)
-                c.print(Panel(Markdown(str(text)[:2000]), title="[bold cyan]prady[/bold cyan]", border_style="cyan"))
+                
+                # Extract and format result
+                c.print(f"\n[bold cyan]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/bold cyan]")
+                c.print(f"[cyan]✨ Response[/cyan]\n")
+                
+                # Format based on result type
+                if isinstance(result, dict):
+                    if 'reasoning_trace' in result:
+                        # Problem solving result
+                        c.print(f"[bold cyan]Problem:[/bold] {result.get('problem', 'N/A')[:100]}")
+                        c.print(f"[bold cyan]Confidence:[/bold] {result.get('confidence', 0):.2f}")
+                        c.print(f"[bold cyan]Elapsed:[/bold] {result.get('elapsed_ms', 0)}ms\n")
+                        if 'decomposition' in result:
+                            c.print(f"[yellow]📋 Decomposition:[/yellow]")
+                            for i, sub in enumerate(result['decomposition'][:3], 1):
+                                c.print(f"  {i}. {sub[:80]}")
+                        if 'reasoning_trace' in result:
+                            c.print(f"\n[yellow]🧠 Reasoning Trace ({len(result['reasoning_trace'])} steps):[/yellow]")
+                            for i, step in enumerate(result['reasoning_trace'][:4], 1):
+                                c.print(f"  {i}. {str(step)[:100]}...")
+                        if 'creative_angles' in result:
+                            c.print(f"\n[yellow]💡 Creative Angles:[/yellow]")
+                            for i, angle in enumerate(result['creative_angles'][:3], 1):
+                                c.print(f"  {i}. {angle[:80]}")
+                        if 'solution' in result:
+                            c.print(f"\n[yellow]✅ Solution:[/yellow]")
+                            c.print(f"  {str(result['solution'])[:300]}...")
+                    elif 'prediction' in result:
+                        # Prediction result
+                        c.print(f"[yellow]🔮 Prediction:[/yellow]")
+                        pred_str = str(result['prediction'])
+                        c.print(f"  {pred_str[:300]}...")
+                        if 'confidence' in result:
+                            c.print(f"\n[yellow]Confidence:[/yellow] {result['confidence']:.2f}")
+                    elif 'visions' in result:
+                        # Dream result
+                        c.print(f"[yellow]🌙 Visions ({len(result.get('visions', []))} types):[/yellow]")
+                        for i, vision in enumerate(result['visions'][:5], 1):
+                            c.print(f"  {i}. {str(vision)[:80]}...")
+                    else:
+                        text = result.get("answer", result.get("conclusion", str(result)))
+                        c.print(f"[yellow]Output:[/yellow]\n{str(text)[:500]}")
+                elif hasattr(result, "reasoning_trace"):
+                    # Object with reasoning
+                    c.print(f"[yellow]📋 Result:[/yellow]")
+                    c.print(f"  {str(result)[:300]}...")
+                else:
+                    text = str(result)
+                    c.print(f"[yellow]Output:[/yellow]\n{text[:500]}")
+                
+                c.print(f"\n[bold cyan]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/bold cyan]\n")
     asyncio.run(_run())
 
 def cmd_status(args):

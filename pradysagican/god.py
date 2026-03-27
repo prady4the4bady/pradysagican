@@ -224,9 +224,12 @@ class PradysagicanGod:
         
         # ── Wire up real LLM provider to all subsystems that need it ──
         llm_provider = None
+        llm_fn = None
         try:
             from pradysagican.providers.llm import UniversalLLMProvider
             llm_provider = UniversalLLMProvider()
+            # Wrap the async complete method so it's compatible
+            llm_fn = llm_provider.complete
             logger.info("✓ Real LLM provider initialized")
         except Exception as e:
             logger.warning("Could not initialize LLM provider: %s — subsystems will use fallback", e)
@@ -234,9 +237,9 @@ class PradysagicanGod:
         # ── Core ────────────────────────────────────────────────────────
         pairs: list[tuple[str, str, str, tuple, dict]] = [
             ("consciousness",       "pradysagican.core.consciousness",       "ConsciousnessEngine",       (), {}),
-            ("reasoning",           "pradysagican.core.reasoning",           "ReasoningEngine",           (llm_provider.complete if llm_provider else None,), {}),
+            ("reasoning",           "pradysagican.core.reasoning",           "ReasoningEngine",           (llm_fn,) if llm_fn else (), {}),
             ("memory",              "pradysagican.core.memory",              "MemorySystem",              (), {}),
-            ("world_model",         "pradysagican.core.world_model",        "WorldModel",                (llm_provider.complete if llm_provider else None,), {}),
+            ("world_model",         "pradysagican.core.world_model",        "WorldModel",                (llm_fn,) if llm_fn else (), {}),
             ("prometheus",          "pradysagican.core.prometheus",          "PrometheusEngine",          (), {}),
             ("atlas",               "pradysagican.core.atlas",              "AtlasRuntime",              (), {}),
             ("aegis",               "pradysagican.core.aegis",              "AegisWiring",               (), {}),

@@ -139,50 +139,90 @@ def cmd_chat(args):
                 c.print(f"\n[bold cyan]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/bold cyan]")
                 c.print(f"[cyan]✨ Response[/cyan]\n")
                 
+                # Helper to extract attributes from result objects
+                def get_attr(obj, attr, default=None):
+                    if isinstance(obj, dict):
+                        return obj.get(attr, default)
+                    return getattr(obj, attr, default)
+                
                 # Format based on result type
-                if isinstance(result, dict):
-                    if 'reasoning_trace' in result:
-                        # Problem solving result
-                        c.print(f"[bold cyan]Problem:[/bold] {result.get('problem', 'N/A')[:100]}")
-                        c.print(f"[bold cyan]Confidence:[/bold] {result.get('confidence', 0):.2f}")
-                        c.print(f"[bold cyan]Elapsed:[/bold] {result.get('elapsed_ms', 0)}ms\n")
-                        if 'decomposition' in result:
-                            c.print(f"[yellow]📋 Decomposition:[/yellow]")
-                            for i, sub in enumerate(result['decomposition'][:3], 1):
-                                c.print(f"  {i}. {sub[:80]}")
-                        if 'reasoning_trace' in result:
-                            c.print(f"\n[yellow]🧠 Reasoning Trace ({len(result['reasoning_trace'])} steps):[/yellow]")
-                            for i, step in enumerate(result['reasoning_trace'][:4], 1):
-                                c.print(f"  {i}. {str(step)[:100]}...")
-                        if 'creative_angles' in result:
-                            c.print(f"\n[yellow]💡 Creative Angles:[/yellow]")
-                            for i, angle in enumerate(result['creative_angles'][:3], 1):
-                                c.print(f"  {i}. {angle[:80]}")
-                        if 'solution' in result:
-                            c.print(f"\n[yellow]✅ Solution:[/yellow]")
-                            c.print(f"  {str(result['solution'])[:300]}...")
-                    elif 'prediction' in result:
-                        # Prediction result
-                        c.print(f"[yellow]🔮 Prediction:[/yellow]")
-                        pred_str = str(result['prediction'])
-                        c.print(f"  {pred_str[:300]}...")
-                        if 'confidence' in result:
-                            c.print(f"\n[yellow]Confidence:[/yellow] {result['confidence']:.2f}")
-                    elif 'visions' in result:
-                        # Dream result
-                        c.print(f"[yellow]🌙 Visions ({len(result.get('visions', []))} types):[/yellow]")
-                        for i, vision in enumerate(result['visions'][:5], 1):
-                            c.print(f"  {i}. {str(vision)[:80]}...")
+                if hasattr(result, "problem"):
+                    # SolveResult or similar object
+                    problem = get_attr(result, "problem", "Unknown")
+                    confidence = get_attr(result, "confidence", 0.0)
+                    elapsed = get_attr(result, "elapsed_ms", 0)
+                    
+                    c.print(f"[bold cyan]🎯 Problem:[/bold cyan] {str(problem)[:100]}")
+                    c.print(f"[bold cyan]🎯 Confidence:[/bold cyan] {confidence:.2%}")
+                    c.print(f"[bold cyan]🎯 Elapsed:[/bold cyan] {elapsed:.2f}ms")
+                    
+                    decomposition = get_attr(result, "decomposition", [])
+                    if decomposition and decomposition != [problem]:
+                        c.print(f"\n[yellow]📋 Sub-problems:[/yellow]")
+                        for i, sub in enumerate(decomposition[:3], 1):
+                            c.print(f"   {i}. {str(sub)[:85]}")
+                    
+                    reasoning = get_attr(result, "reasoning_trace", [])
+                    if reasoning:
+                        c.print(f"\n[yellow]🧠 Reasoning Process (top 3 steps):[/yellow]")
+                        for i, step in enumerate(reasoning[:3], 1):
+                            step_str = str(step).split('\n')[0]
+                            if 'Reasoning step' in step_str or 'Step' in step_str:
+                                step_str = step_str.replace("[Reasoning step based on:", "").replace("]", "").strip()
+                                step_str = step_str[:90]
+                            c.print(f"   {i}. {step_str}")
+                    
+                    angles = get_attr(result, "creative_angles", [])
+                    if angles:
+                        c.print(f"\n[yellow]💡 Creative Insights:[/yellow]")
+                        for i, angle in enumerate(angles[:3], 1):
+                            angle_str = str(angle).replace("Insight:", "").strip()[:85]
+                            c.print(f"   {i}. {angle_str}")
+                    
+                    solution = get_attr(result, "solution", None)
+                    if solution and solution != problem:
+                        sol_str = str(solution)
+                        if "Reasoning step" in sol_str:
+                            sol_str = "Derived from reasoning trace"
+                        c.print(f"\n[bold green]✅ Solution:[/bold green]")
+                        c.print(f"   {sol_str[:200]}")
+                    
+                    verification = get_attr(result, "verification", {})
+                    if verification and isinstance(verification, dict):
+                        logical = verification.get('logical_check', 'N/A')
+                        if logical and logical != "":
+                            c.print(f"\n[cyan]🔍 Verification:[/cyan] {logical[:100]}")
+                
+                elif hasattr(result, "predictions"):
+                    # Prediction result
+                    predictions = get_attr(result, "predictions", {})
+                    confidence = get_attr(result, "confidence", 0.0)
+                    c.print(f"[yellow]🔮 Predictions:[/yellow]")
+                    for i, (model, pred) in enumerate(list(predictions.items())[:3], 1):
+                        c.print(f"   {i}. [{model}] {str(pred)[:80]}")
+                    c.print(f"\n[bold cyan]Ensemble Confidence:[/bold cyan] {confidence:.2%}")
+                
+                elif hasattr(result, "visions"):
+                    # Dream result
+                    visions = get_attr(result, "visions", [])
+                    c.print(f"[yellow]🌙 Creative Visions ({len(visions)} types):[/yellow]")
+                    for i, vision in enumerate(visions[:5], 1):
+                        c.print(f"   {i}. {str(vision)[:85]}")
+                
+                elif isinstance(result, dict):
+                    # Dict result
+                    if 'answer' in result or 'conclusion' in result:
+                        text = result.get("answer", result.get("conclusion", ""))
+                        c.print(f"[yellow]💬 Answer:[/yellow]\n   {str(text)[:400]}")
                     else:
-                        text = result.get("answer", result.get("conclusion", str(result)))
-                        c.print(f"[yellow]Output:[/yellow]\n{str(text)[:500]}")
-                elif hasattr(result, "reasoning_trace"):
-                    # Object with reasoning
-                    c.print(f"[yellow]📋 Result:[/yellow]")
-                    c.print(f"  {str(result)[:300]}...")
+                        c.print(f"[yellow]Result:[/yellow]")
+                        for key, val in list(result.items())[:5]:
+                            val_str = str(val)[:80] if not isinstance(val, (list, dict)) else f"[{type(val).__name__}]"
+                            c.print(f"   {key}: {val_str}")
                 else:
+                    # Fallback
                     text = str(result)
-                    c.print(f"[yellow]Output:[/yellow]\n{text[:500]}")
+                    c.print(f"[yellow]Result:[/yellow]\n{text[:400]}")
                 
                 c.print(f"\n[bold cyan]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/bold cyan]\n")
     asyncio.run(_run())

@@ -1,7 +1,7 @@
 """
 PRADYSAGICAN CLI — Beautiful, powerful, simple.
 Usage:  pradysagican <command>
-Commands: serve | chat | status | benchmark | evolve | access | upgrade | omega | godlayer | version
+Commands: serve | chat | query | status | benchmark | skills | memory | config | version
 """
 from __future__ import annotations
 import argparse, asyncio, sys, os, time

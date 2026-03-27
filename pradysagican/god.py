@@ -221,13 +221,22 @@ class PradysagicanGod:
     async def initialize(self) -> dict[str, Any]:
         """Boot all subsystems. Returns a status dict showing what loaded."""
         t0 = time.time()
-
+        
+        # ── Wire up real LLM provider to all subsystems that need it ──
+        llm_provider = None
+        try:
+            from pradysagican.providers.llm import UniversalLLMProvider
+            llm_provider = UniversalLLMProvider()
+            logger.info("✓ Real LLM provider initialized")
+        except Exception as e:
+            logger.warning("Could not initialize LLM provider: %s — subsystems will use fallback", e)
+        
         # ── Core ────────────────────────────────────────────────────────
         pairs: list[tuple[str, str, str, tuple, dict]] = [
             ("consciousness",       "pradysagican.core.consciousness",       "ConsciousnessEngine",       (), {}),
-            ("reasoning",           "pradysagican.core.reasoning",           "ReasoningEngine",           (), {}),
+            ("reasoning",           "pradysagican.core.reasoning",           "ReasoningEngine",           (llm_provider.complete if llm_provider else None,), {}),
             ("memory",              "pradysagican.core.memory",              "MemorySystem",              (), {}),
-            ("world_model",         "pradysagican.core.world_model",        "WorldModel",                (), {}),
+            ("world_model",         "pradysagican.core.world_model",        "WorldModel",                (llm_provider.complete if llm_provider else None,), {}),
             ("prometheus",          "pradysagican.core.prometheus",          "PrometheusEngine",          (), {}),
             ("atlas",               "pradysagican.core.atlas",              "AtlasRuntime",              (), {}),
             ("aegis",               "pradysagican.core.aegis",              "AegisWiring",               (), {}),
@@ -382,7 +391,8 @@ class PradysagicanGod:
         # Layer 6: Hallucination shield (depth >= 2)
         if depth >= 2 and self._hallucination_shield is not None:
             try:
-                answer_text = " | ".join(result.reasoning_trace[:3]) if result.reasoning_trace else question
+                # Use ALL reasoning steps for full context (not just first 3)
+                answer_text = " ".join(result.reasoning_trace) if result.reasoning_trace else question
                 shielded = await self._hallucination_shield.shield(answer_text, context=question)
                 result.hallucination_check = {
                     "verified": getattr(shielded, "is_safe", True),
@@ -391,15 +401,20 @@ class PradysagicanGod:
             except Exception:
                 pass
 
-        # Synthesize answer
+        # Synthesize answer using full reasoning trace
         parts: list[str] = []
         if result.reasoning_trace:
-            parts.append(result.reasoning_trace[-1])
+            # Use all reasoning steps, not just the last one
+            parts.extend([s for s in result.reasoning_trace if s and len(s) > 10])
         if result.world_model_prediction:
             parts.append(result.world_model_prediction)
         if result.consciousness_layers:
-            parts.append(result.consciousness_layers[-1])
-        result.answer = " → ".join(parts) if parts else f"Contemplated '{question}' at depth {depth}"
+            parts.extend([c for c in result.consciousness_layers if c and len(c) > 5])
+        # Synthesize: join with logical connectors for better readability
+        if parts:
+            result.answer = " Therefore, ".join(parts[:5])  # Show up to 5 parts for clarity
+        else:
+            result.answer = f"Contemplated '{question}' at depth {depth}"
 
         # Confidence = average of available signals
         signals: list[float] = []
@@ -812,15 +827,21 @@ class PradysagicanGod:
             except Exception:
                 pass
 
-        # Synthesize solution
+        # Synthesize solution using full reasoning trace
         parts: list[str] = []
         if result.reasoning_trace:
-            parts.append(result.reasoning_trace[-1])
+            # Use all reasoning steps for comprehensive solution
+            parts.extend([s for s in result.reasoning_trace if s and len(s) > 10])
         if result.verification.get("logical_check"):
             parts.append(str(result.verification["logical_check"]))
         if result.creative_angles:
-            parts.append(result.creative_angles[0])
-        result.solution = " | ".join(parts) if parts else f"Analyzed '{problem}' — solution requires further data"
+            # Include all creative angles, not just the first
+            parts.extend([a for a in result.creative_angles if a and len(a) > 5])
+        # Better synthesis: combine parts meaningfully
+        if parts:
+            result.solution = "\n".join(parts[:8])  # Show up to 8 meaningful parts
+        else:
+            result.solution = f"Analyzed '{problem}' — solution requires further data"
 
         # Confidence
         signals: list[float] = []

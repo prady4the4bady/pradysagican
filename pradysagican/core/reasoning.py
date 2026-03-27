@@ -20,11 +20,34 @@ import math
 import random
 import time
 from dataclasses import dataclass, field
+from enum import Enum
 from typing import Any, Callable, Awaitable
 
 import numpy as np
 
 logger = logging.getLogger(__name__)
+
+
+# ── Enums ───────────────────────────────────────────────────────────────────
+
+class TaskComplexity(str, Enum):
+    """Task complexity levels"""
+    SIMPLE = "simple"           # Factual retrieval
+    MODERATE = "moderate"       # Multi-step reasoning
+    COMPLEX = "complex"         # Graph exploration
+    VERY_COMPLEX = "very_complex"  # Full reasoning pipeline
+
+
+class ExecutionStrategy(str, Enum):
+    """Available reasoning strategies"""
+    DIRECT = "direct"           # One-shot LLM
+    CHAIN_OF_THOUGHT = "cot"    # Sequential steps
+    TREE_OF_THOUGHTS = "tot"    # Branching exploration
+    GRAPH_OF_THOUGHTS = "got"   # Full graph reasoning
+    MONTE_CARLO = "mcts"        # Probabilistic search
+    CAUSAL = "causal"           # Pearl's do-calculus
+    ANALOGICAL = "analogical"   # Analogy-based reasoning
+    HYBRID = "hybrid"           # Automatic selection
 
 
 # ── Data Structures ───────────────────────────────────────────────────────────

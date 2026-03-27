@@ -54,10 +54,46 @@ def cmd_chat(args):
     from rich.panel import Panel
     from rich.markdown import Markdown
     from rich.table import Table
+    
+    # ──────────────────────────────────────────────────────────
+    # SETUP CHECK: Ensure API keys are configured before starting
+    # ──────────────────────────────────────────────────────────
+    from pradysagican.config import load_config
+    cfg = load_config()
+    
+    # Check if any provider has an API key
+    has_any_provider = any(prov.api_key for prov in cfg.providers.values())
+    
+    if not has_any_provider:
+        c.print(Panel(BANNER, border_style="cyan", padding=(1, 2)))
+        c.print("\n[bold yellow]⚠️  NO LLM PROVIDERS CONFIGURED[/bold yellow]\n")
+        c.print("[bold]Quick Setup (30 seconds):[/bold]\n")
+        c.print("[cyan]Option 1: Groq (Free, Recommended)[/cyan]")
+        c.print("  1. Get free API key: https://console.groq.com")
+        c.print("  2. Set in PowerShell:\n")
+        c.print("     [green]$Env:GROQ_API_KEY = 'your-key-here'[/green]\n")
+        c.print("  3. Restart this CLI\n")
+        
+        c.print("[cyan]Option 2: NVIDIA NIM (Free, No signup)[/cyan]")
+        c.print("  1. Get API key: https://build.nvidia.com")
+        c.print("  2. Set in PowerShell:\n")
+        c.print("     [green]$Env:NVIDIA_API_KEY = 'your-key-here'[/green]\n")
+        c.print("  3. Restart this CLI\n")
+        
+        c.print("[cyan]Option 3: Local Ollama (No API key needed)[/cyan]")
+        c.print("  1. Install: https://ollama.ai")
+        c.print("  2. Run: [green]ollama serve[/green]")
+        c.print("  3. In another terminal: [green]ollama pull llama2[/green]")
+        c.print("  4. Restart this CLI\n")
+        
+        c.print("[dim]Learn more:[/dim] https://github.com/prady4the4bady/pradysagican#configuration\n")
+        return
+    
+    # ──────────────────────────────────────────────────────────
     c.print(Panel(BANNER, border_style="cyan", padding=(1, 2)))
     t = Table(show_header=False, border_style="dim", box=None, padding=(0, 1))
     t.add_column(style="cyan"); t.add_column(style="white")
-    for cmd, desc in [("/help","Show commands"),("/status","System health"),("/dream <topic>","Creative dreaming"),("/predict <question>","Make prediction"),("/solve <problem>","Full problem solving"),("/tools","List tool categories"),("/access","Open-access info"),("/upgrades","Upgrade tracker"),("/omega","OMEGA status"),("/godlayer","God-layer status"),("/quit","Exit")]:
+    for cmd, desc in [("/help","Show commands"),("/configure","Setup LLM provider"),("/status","System health"),("/dream <topic>","Creative dreaming"),("/predict <question>","Make prediction"),("/solve <problem>","Full problem solving"),("/tools","List tool categories"),("/access","Open-access info"),("/upgrades","Upgrade tracker"),("/omega","OMEGA status"),("/godlayer","God-layer status"),("/quit","Exit")]:
         t.add_row(cmd, desc)
     c.print(Panel(t, title="[bold]Commands[/bold]", border_style="dim"))
     c.print()
@@ -77,6 +113,31 @@ def cmd_chat(args):
             if inp == "/quit": c.print("[dim]Goodbye.[/dim]"); break
             elif inp == "/help":
                 c.print(Panel(t, title="Commands", border_style="dim"))
+            elif inp == "/configure":
+                c.print("\n[bold cyan]LLM Provider Configuration[/bold cyan]\n")
+                c.print("[yellow]Available Providers:[/yellow]")
+                c.print("  1. [green]groq[/green] - Mixtral 8x7B (Recommended)")
+                c.print("  2. [green]nvidia[/green] - NVIDIA NIM API")
+                c.print("  3. [green]together[/green] - Together AI")
+                c.print("  4. [green]huggingface[/green] - HuggingFace Inference")
+                c.print("  5. [green]ollama[/green] - Local LLM (no API key)\n")
+                provider = c.input("[bold cyan]Choose provider (1-5):[/bold cyan] ").strip()
+                provider_map = {"1": "groq", "2": "nvidia", "3": "together", "4": "huggingface", "5": "ollama"}
+                if provider in provider_map:
+                    prov_name = provider_map[provider]
+                    if prov_name == "ollama":
+                        c.print(f"\n[green]✓ Ollama selected (no API key needed)[/green]")
+                        c.print("Run: [cyan]ollama serve[/cyan] then [cyan]ollama pull llama2[/cyan]")
+                    else:
+                        api_key = c.input(f"[bold cyan]Enter {prov_name.upper()} API key:[/bold cyan] ").strip()
+                        if api_key:
+                            import os
+                            env_var = f"{prov_name.upper()}_API_KEY"
+                            os.environ[env_var] = api_key
+                            c.print(f"\n[green]✓ {prov_name} configured![/green]")
+                            c.print(f"[dim]Tip: Save this in PowerShell:[/dim]\n[cyan]$Env:{env_var} = '{api_key[:10]}...'[/cyan]")
+                        else:
+                            c.print("[yellow]No key provided[/yellow]")
             elif inp == "/status":
                 s = god.stats(); c.print(Panel(f"[green]Subsystems: {s['system']['subsystems_online']}/{s['system']['subsystems_total']}[/green]\n[cyan]Features: {s['features']['combinatorial_total']:,}[/cyan]\n[yellow]Health: {s['system']['health_pct']}%[/yellow]", title="System Status", border_style="green"))
             elif inp == "/access":

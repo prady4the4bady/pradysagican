@@ -1,0 +1,24 @@
+replicaCount: 2
+
+image:
+  repository: pradysagican
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8000
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 256Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+
+env:
+  PRADY_ENV: production
+  PRADY_PORT: "8000"
+

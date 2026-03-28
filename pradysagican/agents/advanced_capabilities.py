@@ -413,6 +413,12 @@ class AdvancedAgentCapabilities:
         self.cost_optimizer = CostOptimizer()
         
         logger.info("Advanced Agent Capabilities initialized")
+
+    def register_toolset(self, tools: List[ToolDefinition]) -> int:
+        """Register a batch of tools and return how many were added."""
+        for tool in tools:
+            self.tool_manager.register_tool(tool)
+        return len(tools)
     
     async def get_system_status(self) -> Dict[str, Any]:
         """Get overall system status."""

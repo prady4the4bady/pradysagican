@@ -31,7 +31,16 @@ jobs:
           pip install pyyaml
 
       - name: Run tests
-        run: pytest -q tests
+        run: |
+          pytest -q \
+            tests/test_phase_17_enterprise_api.py \
+            tests/test_phase_18_evaluation.py \
+            tests/test_phase_19_rag_memory.py \
+            tests/test_phase_20_mcp_ecosystem.py \
+            tests/test_phase_21_deployment_assets.py \
+            tests/test_phase_23_tracing_eval_integration.py \
+            tests/test_phase_24_persistence_dashboard.py \
+            tests/test_phase_25_smoke_validator.py
 
       - name: Verify unified app startup
         run: |

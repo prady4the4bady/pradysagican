@@ -1,0 +1,1 @@
+"""Consciousness modeling module."""

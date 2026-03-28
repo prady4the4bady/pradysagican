@@ -6,16 +6,15 @@ Production-grade FastAPI server with authentication, rate limiting, and observab
 
 import asyncio
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Any, Dict, List, Optional
 from enum import Enum
 import time
 import uuid
 
-from fastapi import FastAPI, HTTPException, Depends, Header, Request
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 import uvicorn
 
 logger = logging.getLogger(__name__)
@@ -68,6 +67,14 @@ class HealthCheckResponse(BaseModel):
     requests_failed: int
     error_rate: float
     avg_response_time_ms: float
+
+
+class RuntimeStatusResponse(BaseModel):
+    """Runtime and deployment readiness status."""
+
+    status: str
+    checks: Dict[str, bool]
+    timestamp: str
 
 
 class AuthenticationError(Exception):
@@ -246,6 +253,7 @@ class EnterpriseAPIServer:
     
     def __init__(self, title: str = "PRADYSAGICAN Agent API", 
                  version: str = "1.0.0"):
+        self.version = version
         self.app = FastAPI(
             title=title,
             version=version,
@@ -259,6 +267,18 @@ class EnterpriseAPIServer:
         
         self._setup_middleware()
         self._setup_routes()
+
+    def _runtime_checks(self) -> Dict[str, bool]:
+        """Readiness checks that do not depend on external services."""
+        metrics = self.request_tracker.get_metrics()
+        checks = {
+            "api_key_manager_ready": self.api_key_manager is not None,
+            "rate_limiter_ready": self.rate_limiter is not None,
+            "request_tracker_ready": self.request_tracker is not None,
+            "processor_ready": self.processor is not None,
+            "error_rate_within_slo": metrics["error_rate"] <= 0.10,
+        }
+        return checks
     
     def _setup_middleware(self) -> None:
         """Setup CORS and other middleware."""
@@ -296,6 +316,27 @@ class EnterpriseAPIServer:
                 error_rate=metrics["error_rate"],
                 avg_response_time_ms=metrics["avg_response_time_ms"]
             )
+
+        @self.app.get("/live")
+        async def live_check() -> Dict[str, Any]:
+            """Liveness probe for container orchestration."""
+            return {"status": "alive", "timestamp": datetime.now().isoformat()}
+
+        @self.app.get("/ready")
+        async def ready_check() -> RuntimeStatusResponse:
+            """Readiness probe with internal component checks."""
+            checks = self._runtime_checks()
+            ready = all(checks.values())
+            return RuntimeStatusResponse(
+                status="ready" if ready else "not_ready",
+                checks=checks,
+                timestamp=datetime.now().isoformat(),
+            )
+
+        @self.app.get("/version")
+        async def version_info() -> Dict[str, str]:
+            """Runtime version metadata."""
+            return {"name": "pradysagican-enterprise-api", "version": self.version}
         
         @self.app.post("/process")
         async def process_request(

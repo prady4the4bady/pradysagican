@@ -6,7 +6,7 @@ Tests for production-grade REST API with authentication and rate limiting.
 import pytest
 from fastapi.testclient import TestClient
 from pradysagican.api.enterprise_server import (
-    EnterpriseAPIServer, AgentRequest, HealthStatus,
+    EnterpriseAPIServer,
     RequestStatus, APIKeyManager, RateLimitTracker
 )
 
@@ -108,6 +108,33 @@ class TestHealthCheck:
         assert "requests_failed" in data
         assert "error_rate" in data
         assert "avg_response_time_ms" in data
+
+
+class TestRuntimeEndpoints:
+    """Test runtime liveness/readiness/version endpoints."""
+
+    def test_live_endpoint(self, client):
+        response = client.get("/live")
+        assert response.status_code == 200
+        data = response.json()
+        assert data["status"] == "alive"
+        assert "timestamp" in data
+
+    def test_ready_endpoint(self, client):
+        response = client.get("/ready")
+        assert response.status_code == 200
+        data = response.json()
+        assert data["status"] in ["ready", "not_ready"]
+        assert "checks" in data
+        assert "api_key_manager_ready" in data["checks"]
+        assert "timestamp" in data
+
+    def test_version_endpoint(self, client):
+        response = client.get("/version")
+        assert response.status_code == 200
+        data = response.json()
+        assert data["name"] == "pradysagican-enterprise-api"
+        assert "version" in data
 
 
 class TestProcessRequest:

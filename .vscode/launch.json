@@ -1,0 +1,26 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "PRADYSAGICAN Enterprise API",
+      "type": "python",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": [
+        "pradysagican.api.enterprise_server:create_api_server",
+        "--factory",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "8000",
+        "--reload"
+      ],
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "env": {
+        "PRADY_ENV": "development",
+        "PRADY_PORT": "8000"
+      }
+    }
+  ]
+}

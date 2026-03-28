@@ -25,3 +25,10 @@ jobs:
 
       - name: Run tests
         run: pytest -q tests
+
+      - name: Verify enterprise API startup
+        run: |
+          python -m uvicorn pradysagican.api.enterprise_server:create_api_server --factory --host 127.0.0.1 --port 8001 &
+          sleep 3
+          curl -f http://127.0.0.1:8001/live
+          curl -f http://127.0.0.1:8001/ready

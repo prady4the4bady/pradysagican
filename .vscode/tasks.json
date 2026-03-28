@@ -1,0 +1,18 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run Enterprise API tests",
+      "type": "shell",
+      "command": "python -m pytest tests/test_phase_17_enterprise_api.py tests/test_phase_18_evaluation.py tests/test_phase_19_rag_memory.py tests/test_phase_20_mcp_ecosystem.py tests/test_phase_21_deployment_assets.py -q",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Enterprise API",
+      "type": "shell",
+      "command": "python -m uvicorn pradysagican.api.enterprise_server:create_api_server --factory --host 127.0.0.1 --port 8000",
+      "problemMatcher": []
+    }
+  ]
+}

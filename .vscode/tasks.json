@@ -11,7 +11,7 @@
     {
       "label": "Run Enterprise API",
       "type": "shell",
-      "command": "python -m uvicorn pradysagican.api.enterprise_server:create_api_server --factory --host 127.0.0.1 --port 8000",
+      "command": "python -m uvicorn pradysagican.api.app:create_unified_app --factory --host 127.0.0.1 --port 8000",
       "problemMatcher": []
     }
   ]

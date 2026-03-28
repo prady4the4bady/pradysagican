@@ -18,6 +18,7 @@ from pydantic import BaseModel
 import uvicorn
 from pradysagican.evaluation.framework import EvaluationCase, EvaluationFramework, EvaluationResult
 from pradysagican.observability.langfuse_adapter import LangfuseAdapter
+from pradysagican.observability.persistent_store import PersistentObservabilityStore
 
 logger = logging.getLogger(__name__)
 
@@ -276,7 +277,7 @@ class EnterpriseAPIServer:
     """Enterprise-grade REST API server."""
     
     def __init__(self, title: str = "PRADYSAGICAN Agent API", 
-                 version: str = "1.0.0"):
+                 version: str = "1.0.0", observability_db_path: str = "data/observability.db"):
         self.version = version
         self.app = FastAPI(
             title=title,
@@ -290,6 +291,7 @@ class EnterpriseAPIServer:
         self.processor = RequestProcessor()
         self.tracer = LangfuseAdapter()
         self.evaluator = EvaluationFramework()
+        self.persistence = PersistentObservabilityStore(observability_db_path)
         self.trace_events: List[Dict[str, Any]] = []
         self.evaluation_results: List[EvaluationResult] = []
 
@@ -331,6 +333,7 @@ class EnterpriseAPIServer:
             "timestamp": datetime.now().isoformat(),
         }
         self.trace_events.append(event)
+        self.persistence.insert_trace_event(event)
         self.tracer.trace(
             name="enterprise_api.process",
             input_data={"request_id": request_id},
@@ -453,6 +456,7 @@ class EnterpriseAPIServer:
                 token_output=max(1, int(result["tokens_used"])),
             )
             self.evaluation_results.append(evaluation_result)
+            self.persistence.insert_evaluation_result(evaluation_result.__dict__)
 
             return AgentResponse(**result)
         
@@ -528,6 +532,51 @@ class EnterpriseAPIServer:
                 avg_cost_usd=report.avg_cost_usd,
                 timestamp=datetime.now().isoformat(),
             )
+
+        @self.app.get("/dashboard")
+        async def dashboard(x_api_key: str = Header(None)) -> Dict[str, Any]:
+            """Unified runtime dashboard payload for frontend/system integration."""
+            if not x_api_key:
+                raise HTTPException(status_code=401, detail="Missing API key")
+            try:
+                self.api_key_manager.validate_key(x_api_key)
+            except AuthenticationError:
+                raise HTTPException(status_code=401, detail="Invalid API key")
+
+            metrics = self.request_tracker.get_metrics()
+            checks = self._runtime_checks()
+            eval_summary = await evaluation_summary(x_api_key=x_api_key)
+            return {
+                "status": "ready" if all(checks.values()) else "degraded",
+                "runtime_checks": checks,
+                "metrics": metrics,
+                "evaluation": eval_summary.model_dump(),
+                "recent_traces": self.persistence.list_traces(limit=10),
+                "timestamp": datetime.now().isoformat(),
+            }
+
+        @self.app.get("/reports/export")
+        async def export_reports(
+            x_api_key: str = Header(None),
+            limit: int = 100,
+        ) -> Dict[str, Any]:
+            """Export persisted traces + evaluations for offline analysis."""
+            if not x_api_key:
+                raise HTTPException(status_code=401, detail="Missing API key")
+            try:
+                self.api_key_manager.validate_key(x_api_key)
+            except AuthenticationError:
+                raise HTTPException(status_code=401, detail="Invalid API key")
+
+            traces = self.persistence.list_traces(limit=limit)
+            evaluations = self.persistence.list_evaluations(limit=limit)
+            return {
+                "exported_at": datetime.now().isoformat(),
+                "trace_count": len(traces),
+                "evaluation_count": len(evaluations),
+                "traces": traces,
+                "evaluations": evaluations,
+            }
     
     def get_app(self) -> FastAPI:
         """Get the FastAPI application."""

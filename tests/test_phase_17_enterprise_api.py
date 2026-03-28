@@ -14,7 +14,7 @@ from pradysagican.api.enterprise_server import (
 @pytest.fixture
 def api_server():
     """Create an API server for testing."""
-    return EnterpriseAPIServer()
+    return EnterpriseAPIServer(observability_db_path="data/observability_test.db")
 
 
 @pytest.fixture

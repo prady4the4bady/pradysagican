@@ -2,12 +2,12 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "PRADYSAGICAN Enterprise API",
+      "name": "PRADYSAGICAN Unified App",
       "type": "python",
       "request": "launch",
       "module": "uvicorn",
       "args": [
-        "pradysagican.api.enterprise_server:create_api_server",
+        "pradysagican.api.app:create_unified_app",
         "--factory",
         "--host",
         "127.0.0.1",

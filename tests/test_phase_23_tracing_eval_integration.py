@@ -6,7 +6,7 @@ from pradysagican.api.enterprise_server import EnterpriseAPIServer
 
 
 def test_trace_and_evaluation_state_growth() -> None:
-    server = EnterpriseAPIServer()
+    server = EnterpriseAPIServer(observability_db_path="data/observability_test.db")
     client = TestClient(server.get_app())
     api_key = server.api_key_manager.create_test_key()
 
@@ -25,7 +25,7 @@ def test_trace_and_evaluation_state_growth() -> None:
 
 
 def test_trace_payload_shape() -> None:
-    server = EnterpriseAPIServer()
+    server = EnterpriseAPIServer(observability_db_path="data/observability_test.db")
     client = TestClient(server.get_app())
     api_key = server.api_key_manager.create_test_key()
 

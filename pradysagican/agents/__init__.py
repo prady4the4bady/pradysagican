@@ -6,6 +6,7 @@ from pradysagican.agents.ethics import EthicsGuardian, EthicalAssessment, Stakeh
 from pradysagican.agents.learner import SelfImprovementEngine, LearningEpisode, SkillTree, Heuristic, SelfModification
 from pradysagican.agents.inventor import InventionEngine, Invention, Hypothesis, InnovationMatrix, ResearchPipeline, PatentAnalyser
 from pradysagican.agents.code_agent import PRADYCodeAgent, AgentOutput
+from pradysagican.agents.gpt_bot_catalog import GPTBotCatalog, GPTBotDefinition
 from pradysagican.agents.contracts import (
     OrchestratorRequest,
     StrategistResponse,
@@ -28,6 +29,8 @@ __all__ = [
     "InventionEngine", "Invention", "Hypothesis", "InnovationMatrix", "ResearchPipeline", "PatentAnalyser",
     # Code agent
     "PRADYCodeAgent", "AgentOutput",
+    # GPT bots catalog
+    "GPTBotCatalog", "GPTBotDefinition",
     # Contracts
     "OrchestratorRequest", "StrategistResponse", "AgentTaskEnvelope", "AgentResultEnvelope",
 ]

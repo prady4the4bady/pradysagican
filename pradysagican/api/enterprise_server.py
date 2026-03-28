@@ -16,6 +16,7 @@ from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import uvicorn
+from pradysagican.agents.gpt_bot_catalog import GPTBotCatalog, GPTBotDefinition
 from pradysagican.evaluation.framework import EvaluationCase, EvaluationFramework, EvaluationResult
 from pradysagican.observability.langfuse_adapter import LangfuseAdapter
 from pradysagican.observability.persistent_store import PersistentObservabilityStore
@@ -100,6 +101,14 @@ class EvaluationSummaryResponse(BaseModel):
     avg_coherence_score: float
     avg_cost_usd: float
     timestamp: str
+
+
+class GPTBotRouteRequest(BaseModel):
+    """Request payload for GPT bot routing."""
+
+    query: str
+    preferred_bot: Optional[str] = None
+    preferred_category: Optional[str] = None
 
 
 class AuthenticationError(Exception):
@@ -292,6 +301,7 @@ class EnterpriseAPIServer:
         self.tracer = LangfuseAdapter()
         self.evaluator = EvaluationFramework()
         self.persistence = PersistentObservabilityStore(observability_db_path)
+        self.bot_catalog = GPTBotCatalog()
         self.trace_events: List[Dict[str, Any]] = []
         self.evaluation_results: List[EvaluationResult] = []
 
@@ -306,6 +316,7 @@ class EnterpriseAPIServer:
             "rate_limiter_ready": self.rate_limiter is not None,
             "request_tracker_ready": self.request_tracker is not None,
             "processor_ready": self.processor is not None,
+            "bot_catalog_ready": self.bot_catalog is not None,
             "error_rate_within_slo": metrics["error_rate"] <= 0.10,
         }
         return checks
@@ -577,6 +588,82 @@ class EnterpriseAPIServer:
                 "traces": traces,
                 "evaluations": evaluations,
             }
+
+        @self.app.get("/gpt-bots")
+        async def list_gpt_bots(
+            x_api_key: str = Header(None),
+            category: Optional[str] = None,
+            limit: int = 100,
+        ) -> Dict[str, Any]:
+            """List integrated GPT helper bots from the imported catalog."""
+            if not x_api_key:
+                raise HTTPException(status_code=401, detail="Missing API key")
+            try:
+                self.api_key_manager.validate_key(x_api_key)
+            except AuthenticationError:
+                raise HTTPException(status_code=401, detail="Invalid API key")
+
+            bots = self.bot_catalog.list_bots(category=category, limit=limit)
+            return {
+                "total": len(bots),
+                "category_filter": category,
+                "items": [b.to_dict() for b in bots],
+            }
+
+        @self.app.get("/gpt-bots/categories")
+        async def list_gpt_bot_categories(x_api_key: str = Header(None)) -> Dict[str, Any]:
+            """List available bot categories and basic architecture blueprints."""
+            if not x_api_key:
+                raise HTTPException(status_code=401, detail="Missing API key")
+            try:
+                self.api_key_manager.validate_key(x_api_key)
+            except AuthenticationError:
+                raise HTTPException(status_code=401, detail="Invalid API key")
+
+            categories = self.bot_catalog.list_categories()
+            return {"total": len(categories), "items": categories}
+
+        @self.app.get("/gpt-bots/{bot_identifier}")
+        async def get_gpt_bot(
+            bot_identifier: str,
+            x_api_key: str = Header(None),
+        ) -> Dict[str, Any]:
+            """Get one bot by numeric ID or case-insensitive name."""
+            if not x_api_key:
+                raise HTTPException(status_code=401, detail="Missing API key")
+            try:
+                self.api_key_manager.validate_key(x_api_key)
+            except AuthenticationError:
+                raise HTTPException(status_code=401, detail="Invalid API key")
+
+            bot: Optional[GPTBotDefinition] = self.bot_catalog.get_bot(bot_identifier)
+            if not bot:
+                raise HTTPException(status_code=404, detail="GPT bot not found")
+            return {"item": bot.to_dict()}
+
+        @self.app.post("/gpt-bots/route")
+        async def route_gpt_bot(
+            payload: GPTBotRouteRequest,
+            x_api_key: str = Header(None),
+        ) -> Dict[str, Any]:
+            """Route an incoming task to the best-fit helper bot architecture."""
+            if not x_api_key:
+                raise HTTPException(status_code=401, detail="Missing API key")
+            try:
+                self.api_key_manager.validate_key(x_api_key)
+            except AuthenticationError:
+                raise HTTPException(status_code=401, detail="Invalid API key")
+
+            try:
+                route = self.bot_catalog.route(
+                    query=payload.query,
+                    preferred_bot=payload.preferred_bot,
+                    preferred_category=payload.preferred_category,
+                )
+            except ValueError as exc:
+                raise HTTPException(status_code=400, detail=str(exc))
+
+            return route
     
     def get_app(self) -> FastAPI:
         """Get the FastAPI application."""

@@ -57,6 +57,12 @@ def main() -> int:
         traces = get_json("/traces", headers={"X-API-Key": key})
         dashboard = get_json("/dashboard", headers={"X-API-Key": key})
         report = get_json("/reports/export", headers={"X-API-Key": key})
+        bots = get_json("/gpt-bots?limit=3", headers={"X-API-Key": key})
+        routed_bot = post_json(
+            "/gpt-bots/route",
+            {"query": "Need better instagram growth and engagement plan"},
+            headers={"X-API-Key": key},
+        )
 
         assert live["status"] == "alive"
         assert ready["status"] in ("ready", "not_ready")
@@ -64,6 +70,9 @@ def main() -> int:
         assert traces["total"] >= 1
         assert "metrics" in dashboard
         assert report["trace_count"] >= 1
+        assert bots["total"] >= 3
+        assert "bot" in routed_bot
+        assert "architecture" in routed_bot
         print("SMOKE_VALIDATE_OK")
         return 0
     except (AssertionError, HTTPError, URLError, KeyError, TimeoutError) as exc:

@@ -44,3 +44,24 @@ def test_dashboard_and_export_after_requests() -> None:
     assert len(r["traces"]) >= 1
     assert len(r["evaluations"]) >= 1
 
+
+def test_gpt_bot_endpoints_available_in_unified_server() -> None:
+    db_file = Path("data") / f"observability_test_{datetime.now().strftime('%Y%m%d%H%M%S%f')}.db"
+    _, client, key = _setup_server_with_temp_db(str(db_file))
+
+    bots = client.get("/gpt-bots?limit=5", headers={"X-API-Key": key})
+    assert bots.status_code == 200
+    payload = bots.json()
+    assert payload["total"] >= 5
+    assert len(payload["items"]) == 5
+
+    routed = client.post(
+        "/gpt-bots/route",
+        json={"query": "Create a high-converting cold email campaign"},
+        headers={"X-API-Key": key},
+    )
+    assert routed.status_code == 200
+    route_payload = routed.json()
+    assert "bot" in route_payload
+    assert "architecture" in route_payload
+

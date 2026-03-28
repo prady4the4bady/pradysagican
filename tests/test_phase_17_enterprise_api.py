@@ -319,6 +319,73 @@ class TestTracingAndEvaluation:
         assert "avg_cost_usd" in data
 
 
+class TestGPTBotCatalogEndpoints:
+    """Test integrated GPT bot catalog and routing endpoints."""
+
+    def test_list_gpt_bots_requires_auth(self, client):
+        response = client.get("/gpt-bots")
+        assert response.status_code == 401
+
+    def test_list_gpt_bots(self, client, test_api_key):
+        response = client.get("/gpt-bots", headers={"X-API-Key": test_api_key})
+        assert response.status_code == 200
+        data = response.json()
+        assert data["total"] >= 70
+        assert len(data["items"]) >= 1
+        assert "name" in data["items"][0]
+        assert "category" in data["items"][0]
+
+    def test_list_gpt_bot_categories(self, client, test_api_key):
+        response = client.get("/gpt-bots/categories", headers={"X-API-Key": test_api_key})
+        assert response.status_code == 200
+        data = response.json()
+        assert data["total"] >= 10
+        assert "Marketing" in data["items"]
+
+    def test_get_gpt_bot_by_id(self, client, test_api_key):
+        response = client.get("/gpt-bots/1", headers={"X-API-Key": test_api_key})
+        assert response.status_code == 200
+        data = response.json()
+        assert data["item"]["id"] == 1
+        assert data["item"]["name"] == "Ava"
+
+    def test_get_gpt_bot_not_found(self, client, test_api_key):
+        response = client.get("/gpt-bots/9999", headers={"X-API-Key": test_api_key})
+        assert response.status_code == 404
+
+    def test_route_gpt_bot_semantic_match(self, client, test_api_key):
+        response = client.post(
+            "/gpt-bots/route",
+            json={"query": "Need help with SEO keywords and ad copy conversion"},
+            headers={"X-API-Key": test_api_key},
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["route_type"] in ("semantic_match", "category_default")
+        assert "bot" in data
+        assert "architecture" in data
+        assert "pipeline" in data["architecture"]
+        assert len(data["architecture"]["pipeline"]) >= 1
+
+    def test_route_gpt_bot_with_category_filter(self, client, test_api_key):
+        response = client.post(
+            "/gpt-bots/route",
+            json={"query": "Improve my store conversion rate", "preferred_category": "E-commerce"},
+            headers={"X-API-Key": test_api_key},
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["bot"]["category"] == "E-commerce"
+
+    def test_route_gpt_bot_with_invalid_category(self, client, test_api_key):
+        response = client.post(
+            "/gpt-bots/route",
+            json={"query": "anything", "preferred_category": "Unknown Category"},
+            headers={"X-API-Key": test_api_key},
+        )
+        assert response.status_code == 400
+
+
 class TestTestKeyEndpoint:
     """Test test key generation endpoint."""
     

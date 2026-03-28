@@ -165,3 +165,6 @@ asyncio_mode = "auto"
 
 [tool.setuptools.packages.find]
 include = ["pradysagican*"]
+
+[tool.setuptools.package-data]
+pradysagican = ["agents/gpt_bots_catalog.json"]

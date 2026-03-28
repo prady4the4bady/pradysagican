@@ -1,0 +1,1262 @@
+[
+  {
+    "id": 1,
+    "name": "Ava",
+    "category": "Social Media",
+    "purpose": "Social media growth expert offering strategies to gain followers.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a21a9fbdec819181a09a21c47eab1c-ava-growth-gpt",
+        "external_id": "g-67a21a9fbdec819181a09a21c47eab1c-ava-growth-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Growth GPT"
+  },
+  {
+    "id": 2,
+    "name": "Stella",
+    "category": "Social Media",
+    "purpose": "Assists social media managers with content creation and engagement strategies.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a21bb6482c81919bdebe7ca5530c55-stella-social-media-manager-gpt",
+        "external_id": "g-67a21bb6482c81919bdebe7ca5530c55-stella-social-media-manager-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Social media manager GPT"
+  },
+  {
+    "id": 3,
+    "name": "Leo",
+    "category": "Social Media",
+    "purpose": "Generates viral YouTube video scripts with SEO and engagement strategies.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a21c93a3988191938e7159e22e271d-leo-viral-scripts-gpt",
+        "external_id": "g-67a21c93a3988191938e7159e22e271d-leo-viral-scripts-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Viral Scripts GPT"
+  },
+  {
+    "id": 4,
+    "name": "Cara",
+    "category": "Social Media",
+    "purpose": "Adapts content for various social media platforms.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a21d30e91c81918fd5774d1d5ce6d2-cara-content-repurposing-bot",
+        "external_id": "g-67a21d30e91c81918fd5774d1d5ce6d2-cara-content-repurposing-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Content Repurposing Bot"
+  },
+  {
+    "id": 5,
+    "name": "Febo",
+    "category": "Social Media",
+    "purpose": "Crafts engaging, shareable Facebook content.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a39ba98c248191b79595583abd0718-febo-engagement-bot",
+        "external_id": "g-67a39ba98c248191b79595583abd0718-febo-engagement-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Facebook Engagement Bot"
+  },
+  {
+    "id": 6,
+    "name": "Instar",
+    "category": "Social Media",
+    "purpose": "Offers tips on content, trends, and audience growth for Instagram.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a21e61d39481918a0b4380dd5d493d-instar-growth-bot",
+        "external_id": "g-67a21e61d39481918a0b4380dd5d493d-instar-growth-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Instagram Growth Bot"
+  },
+  {
+    "id": 7,
+    "name": "Linx",
+    "category": "Social Media",
+    "purpose": "Offers expert guidance in enhancing business profiles and strategies on LinkedIn.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a21f2aeb488191838a35339ada1a82-linx-growth-bot",
+        "external_id": "g-67a21f2aeb488191838a35339ada1a82-linx-growth-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "LinkedIn Growth Bot"
+  },
+  {
+    "id": 8,
+    "name": "Sandra",
+    "category": "Social Media",
+    "purpose": "Offers practical advice for effective social media strategies.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a21fd71a308191bf42bd509c4d20a0-sandra-social-media-strategy-bot",
+        "external_id": "g-67a21fd71a308191bf42bd509c4d20a0-sandra-social-media-strategy-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Social Media Strategy Bot"
+  },
+  {
+    "id": 9,
+    "name": "Xavier",
+    "category": "Social Media",
+    "purpose": "Crafts engaging X/Twitter content with emojis and hashtags.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a224ec60d88191b65283816a538486-xavier-growth-bot",
+        "external_id": "g-67a224ec60d88191b65283816a538486-xavier-growth-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "X/Twitter Growth Bot"
+  },
+  {
+    "id": 10,
+    "name": "Viddi",
+    "category": "Social Media",
+    "purpose": "Brainstorms viral YouTube Shorts ideas.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a22576610c819191ae29b68f8c9934-viddi-viral-video-creation-bot",
+        "external_id": "g-67a22576610c819191ae29b68f8c9934-viddi-viral-video-creation-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Viral Video Creation Bot"
+  },
+  {
+    "id": 11,
+    "name": "Vex",
+    "category": "Social Media",
+    "purpose": "Creates captivating viral hooks, offering a conversational tone.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a225f90ebc8191893f9eb7a91942cb-vex-viral-hooks-creator-bot",
+        "external_id": "g-67a225f90ebc8191893f9eb7a91942cb-vex-viral-hooks-creator-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Viral Hooks Creator Bot"
+  },
+  {
+    "id": 12,
+    "name": "Finn",
+    "category": "Content Creation",
+    "purpose": "Creates engaging podcast scripts, outlines, and interview questions.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a2267819a88191b41f4978702789f1-finn-podcast-gpt",
+        "external_id": "g-67a2267819a88191b41f4978702789f1-finn-podcast-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Podcast GPT"
+  },
+  {
+    "id": 13,
+    "name": "Ivy",
+    "category": "Content Creation",
+    "purpose": "Creates engaging newsletter content tailored to the user's audience.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a22739b7a08191ba6ed469da04a21b-ivy-newsletter-gpt",
+        "external_id": "g-67a22739b7a08191ba6ed469da04a21b-ivy-newsletter-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Newsletter GPT"
+  },
+  {
+    "id": 14,
+    "name": "Max",
+    "category": "Content Creation",
+    "purpose": "Helps plan and optimize content strategy with topic ideas and content calendar.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a227ab61e08191aecd023435ad4e67-max-content-planner-gpt",
+        "external_id": "g-67a227ab61e08191aecd023435ad4e67-max-content-planner-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Content Planner GPT"
+  },
+  {
+    "id": 15,
+    "name": "Cora",
+    "category": "Content Creation",
+    "purpose": "Generates effective email subject lines for marketing.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a22835c09c819188107a57778fe8cb-cora-email-subject-line-gpt",
+        "external_id": "g-67a22835c09c819188107a57778fe8cb-cora-email-subject-line-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Email Subject Line GPT"
+  },
+  {
+    "id": 16,
+    "name": "Orion",
+    "category": "Content Creation",
+    "purpose": "Assists in creating visually appealing and effective presentations.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a228b1cec48191b41b6d627b2afcb7-orion-presentation-maker-gpt",
+        "external_id": "g-67a228b1cec48191b41b6d627b2afcb7-orion-presentation-maker-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Presentation Maker GPT"
+  },
+  {
+    "id": 17,
+    "name": "Sage",
+    "category": "Content Creation",
+    "purpose": "Provides concise and accurate summaries of lengthy texts.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a229c0b6508191b1297234a0190564-sage-summariser-gpt",
+        "external_id": "g-67a229c0b6508191b1297234a0190564-sage-summariser-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Summariser GPT"
+  },
+  {
+    "id": 18,
+    "name": "Dina",
+    "category": "Content Creation",
+    "purpose": "Offers expertise in digital marketing content creation.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a22a500f5c81918e2fe568199de70a-dina-digital-content-creation-bot",
+        "external_id": "g-67a22a500f5c81918e2fe568199de70a-dina-digital-content-creation-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Digital Content Creation Bot"
+  },
+  {
+    "id": 19,
+    "name": "Titan",
+    "category": "Business",
+    "purpose": "Helps businesses create compelling, tailored offers for their products or services.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a22b0f40e48191b8785e49e3ce0d61-titan-business-offer-gpt",
+        "external_id": "g-67a22b0f40e48191b8785e49e3ce0d61-titan-business-offer-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Business Offer GPT"
+  },
+  {
+    "id": 20,
+    "name": "Aurora",
+    "category": "Business",
+    "purpose": "Provides strategies and tips for sales negotiations.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a22ba84f90819185ed94d81e50ef12-aurora-sales-negotiation-coach-gpt",
+        "external_id": "g-67a22ba84f90819185ed94d81e50ef12-aurora-sales-negotiation-coach-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Sales negotiation coach GPT"
+  },
+  {
+    "id": 21,
+    "name": "Linda",
+    "category": "Business",
+    "purpose": "Generates customizable sales templates for various needs.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a22c03687481919ba010c181862c18-linda-sales-template-gpt",
+        "external_id": "g-67a22c03687481919ba010c181862c18-linda-sales-template-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Sales template GPT"
+  },
+  {
+    "id": 22,
+    "name": "Echo",
+    "category": "Business",
+    "purpose": "Guides users in crafting concise and compelling pitches.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a22c896208819188d819d3630d17f0-echo-pitch-perfect-gpt",
+        "external_id": "g-67a22c896208819188d819d3630d17f0-echo-pitch-perfect-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Pitch Perfect GPT"
+  },
+  {
+    "id": 23,
+    "name": "Cassie",
+    "category": "Business",
+    "purpose": "Provides a professional B2B agency client onboarding guide.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a22cdf08a48191b8eee865a5ecc88b-cassie-client-onboarding-bot",
+        "external_id": "g-67a22cdf08a48191b8eee865a5ecc88b-cassie-client-onboarding-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Client Onboarding Bot"
+  },
+  {
+    "id": 24,
+    "name": "Oliver",
+    "category": "Business",
+    "purpose": "Offers competitive and profitable pricing strategies for businesses.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a22d4e085c8191ae756460ba2e6302-oliver-pricing-strategy-expert-gpt",
+        "external_id": "g-67a22d4e085c8191ae756460ba2e6302-oliver-pricing-strategy-expert-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Pricing strategy expert GPT"
+  },
+  {
+    "id": 25,
+    "name": "Ember",
+    "category": "Business",
+    "purpose": "Expert branding advice for building and maintaining a strong brand identity.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a22da6728881919f7955bebd74144b-ember-branding-expert-gpt",
+        "external_id": "g-67a22da6728881919f7955bebd74144b-ember-branding-expert-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Branding Expert GPT"
+  },
+  {
+    "id": 26,
+    "name": "Ruby",
+    "category": "Business",
+    "purpose": "Assists users in growing their email lists with personalized tips and strategies.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a37366d81c8191baa6fe5f39ec07d4-ruby-email-list-growth-gpt",
+        "external_id": "g-67a37366d81c8191baa6fe5f39ec07d4-ruby-email-list-growth-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Email List Growth GPT"
+  },
+  {
+    "id": 27,
+    "name": "Blaze",
+    "category": "Business",
+    "purpose": "Optimizes and automates the sales process for better conversion rates.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a24cf199308191876b2dcf0ed25ff3-blaze-sales-funnel-bot",
+        "external_id": "g-67a24cf199308191876b2dcf0ed25ff3-blaze-sales-funnel-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Sales Funnel Bot"
+  },
+  {
+    "id": 28,
+    "name": "Axel",
+    "category": "Business",
+    "purpose": "Assists in managing and improving customer relationships.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a24d5c80f881918547f2c90f8f7667-axel-customer-relationship-management-gpt",
+        "external_id": "g-67a24d5c80f881918547f2c90f8f7667-axel-customer-relationship-management-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Customer relationship management GPT"
+  },
+  {
+    "id": 29,
+    "name": "Oscar",
+    "category": "Productivity & Management",
+    "purpose": "Helps users prioritize tasks effectively.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a24dc100a88191935f29971ad08811-oscar-task-prioritiser-gpt",
+        "external_id": "g-67a24dc100a88191935f29971ad08811-oscar-task-prioritiser-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Task Prioritiser GPT"
+  },
+  {
+    "id": 30,
+    "name": "Nico",
+    "category": "Productivity & Management",
+    "purpose": "Boosts workplace productivity with tips, tools, and personalized advice.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a24e185c3881919d5d16e46e834fa4-nico-productivity-enhancer-gpt",
+        "external_id": "g-67a24e185c3881919d5d16e46e834fa4-nico-productivity-enhancer-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Productivity Enhancer GPT"
+  },
+  {
+    "id": 31,
+    "name": "Sadie",
+    "category": "Productivity & Management",
+    "purpose": "Provides tools and support for productive remote work",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a24e89bdb88191a553234bc344071c-sadie-remote-work-bot",
+        "external_id": "g-67a24e89bdb88191a553234bc344071c-sadie-remote-work-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Remote Work Bot"
+  },
+  {
+    "id": 32,
+    "name": "Phoebe",
+    "category": "Creative Tools",
+    "purpose": "Assists users in designing logos for businesses, projects, or personal brands.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a24ef29e348191a29ff35386879225-phoebe-logo-generator-gpt",
+        "external_id": "g-67a24ef29e348191a29ff35386879225-phoebe-logo-generator-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Logo generator GPT"
+  },
+  {
+    "id": 33,
+    "name": "Theo",
+    "category": "Creative Tools",
+    "purpose": "Creates compelling landing page content for various industries.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a24f8455fc81919142351f8e2dad73-theo-landing-page-writer-gpt",
+        "external_id": "g-67a24f8455fc81919142351f8e2dad73-theo-landing-page-writer-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Landing page writer GPT"
+  },
+  {
+    "id": 34,
+    "name": "Aria",
+    "category": "Creative Tools",
+    "purpose": "Assists in creating educational courses and lesson plans.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a250b6468881918c38c189b06753b3-aria-create-course-gpt",
+        "external_id": "g-67a250b6468881918c38c189b06753b3-aria-create-course-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Create Course GPT"
+  },
+  {
+    "id": 35,
+    "name": "Aiden",
+    "category": "Personal Development",
+    "purpose": "Helps users find their own answers and advice, guiding them to discover personalized and meaningful solutions",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a2511ece648191ae72c285e318adb1-aiden-personal-mentor-gpt",
+        "external_id": "g-67a2511ece648191ae72c285e318adb1-aiden-personal-mentor-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Personal Mentor GPT"
+  },
+  {
+    "id": 36,
+    "name": "Elara",
+    "category": "Personal Development",
+    "purpose": "Offers personalized strategies and tools for effective time management.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a251a5e954819194d1383739eee1d8-elara-time-management-gpt",
+        "external_id": "g-67a251a5e954819194d1383739eee1d8-elara-time-management-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Time management GPT"
+  },
+  {
+    "id": 37,
+    "name": "Jasper",
+    "category": "Personal Development",
+    "purpose": "Provides constructive and honest feedback with empathy and actionable suggestions.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a251fe9d2081919213003b74c47548-jasper-honest-feedback-gpt",
+        "external_id": "g-67a251fe9d2081919213003b74c47548-jasper-honest-feedback-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Honest Feedback GPT"
+  },
+  {
+    "id": 38,
+    "name": "Ethan",
+    "category": "Strategy & Analysis",
+    "purpose": "Helps users identify problems and suggest solutions in various domains.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a2526eccc48191a5ce9f5c46c2686b-ethan-problems-solutions-gpt",
+        "external_id": "g-67a2526eccc48191a5ce9f5c46c2686b-ethan-problems-solutions-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Problems & Solutions GPT"
+  },
+  {
+    "id": 39,
+    "name": "Sharon",
+    "category": "Strategy & Analysis",
+    "purpose": "Analyzes target audiences for businesses and brands",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a253089ba08191831fdaaed68b0f89-sharon-target-audience-analyzer",
+        "external_id": "g-67a253089ba08191831fdaaed68b0f89-sharon-target-audience-analyzer"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Target Audience Analyzer"
+  },
+  {
+    "id": 40,
+    "name": "Iris",
+    "category": "Strategy & Analysis",
+    "purpose": "Encourages creativity and innovation within teams.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a33b42e8c081918bfd9fdc4f50d7c7-iris-innovation-coach-gpt",
+        "external_id": "g-67a33b42e8c081918bfd9fdc4f50d7c7-iris-innovation-coach-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Innovation Coach GPT"
+  },
+  {
+    "id": 41,
+    "name": "Remy",
+    "category": "Strategy & Analysis",
+    "purpose": "Helps businesses manage risks with strategies and planning.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a33bb43ef0819193c5e7d9517649cd-remy-risk-management-gpt",
+        "external_id": "g-67a33bb43ef0819193c5e7d9517649cd-remy-risk-management-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Risk Management GPT"
+  },
+  {
+    "id": 42,
+    "name": "Zenith",
+    "category": "Strategy & Analysis",
+    "purpose": "Provides pricing strategies based on market analysis.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a33c0777488191b380e3ae1d7cb73f-zenith-pricing-strategy-bot",
+        "external_id": "g-67a33c0777488191b380e3ae1d7cb73f-zenith-pricing-strategy-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Pricing Strategy Bot"
+  },
+  {
+    "id": 43,
+    "name": "Blake",
+    "category": "E-commerce",
+    "purpose": "Optimizes online stores with insights and strategies.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a33c59b74c819183ed3b31121b3e25-blake-e-commerce-optimization-bot",
+        "external_id": "g-67a33c59b74c819183ed3b31121b3e25-blake-e-commerce-optimization-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "E-commerce Optimization Bot"
+  },
+  {
+    "id": 44,
+    "name": "Lyra",
+    "category": "E-commerce",
+    "purpose": "Analyzes customer data to create detailed segments for targeted marketing.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a33ca88e9081918072f7a0d2f41c3d-lyra-customer-segmentation-bot",
+        "external_id": "g-67a33ca88e9081918072f7a0d2f41c3d-lyra-customer-segmentation-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Customer Segmentation Bot"
+  },
+  {
+    "id": 45,
+    "name": "Nora",
+    "category": "Finance & Operations",
+    "purpose": "Automates invoice creation and management for businesses.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a33d00f6a481918a0fbb7dd5410af2-nora-invoice-bot",
+        "external_id": "g-67a33d00f6a481918a0fbb7dd5410af2-nora-invoice-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Invoice Management Bot"
+  },
+  {
+    "id": 46,
+    "name": "Vinnie",
+    "category": "Assistants",
+    "purpose": "Provides expert guidance for virtual assistant success.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a33d57ad4c81919cb9e9bc2697c7ea-vinnie-virtual-assistant-bot",
+        "external_id": "g-67a33d57ad4c81919cb9e9bc2697c7ea-vinnie-virtual-assistant-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Virtual Assistant Bot"
+  },
+  {
+    "id": 47,
+    "name": "Bobby",
+    "category": "Assistants",
+    "purpose": "Offers business advice, strategies and growth tactics.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a33dab6a8881918fd5b9c85b334bdf-bobby-business-assistant-bot",
+        "external_id": "g-67a33dab6a8881918fd5b9c85b334bdf-bobby-business-assistant-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Business Assistant Bot"
+  },
+  {
+    "id": 48,
+    "name": "Ceevee",
+    "category": "Jobseekers",
+    "purpose": "Provides guidance for crafting standout CVs.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a33f07038c819188d87cae3bdda686-ceevee-cv-enhancement-bot",
+        "external_id": "g-67a33f07038c819188d87cae3bdda686-ceevee-cv-enhancement-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "CV Enhancement Bot"
+  },
+  {
+    "id": 49,
+    "name": "Emmi",
+    "category": "Jobseekers",
+    "purpose": "Offers a comprehensive excel guide for all skill levels.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a33f598f208191ab708829c09a27cc-emmi-excel-mentor-bot",
+        "external_id": "g-67a33f598f208191ab708829c09a27cc-emmi-excel-mentor-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Excel Mentor Bot"
+  },
+  {
+    "id": 50,
+    "name": "Inti",
+    "category": "Jobseekers",
+    "purpose": "Provides expert coaching for mock interviews and feedback.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a33faa157c81919c95b08e834626d0-inti-interview-process-bot",
+        "external_id": "g-67a33faa157c81919c95b08e834626d0-inti-interview-process-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Interview Process Bot"
+  },
+  {
+    "id": 51,
+    "name": "Cindy",
+    "category": "Customer Support",
+    "purpose": "Offers friendly coaching and practical tips for better customer service.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a33ff0ddec81918828d9ce300921fc-cindy-customer-service-bot",
+        "external_id": "g-67a33ff0ddec81918828d9ce300921fc-cindy-customer-service-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Customer Service Bot"
+  },
+  {
+    "id": 52,
+    "name": "Victor",
+    "category": "Customer Support",
+    "purpose": "Guides users in effectively addressing client product queries.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a34050f0a08191855952604cb742f7-victor-virtual-support-bot",
+        "external_id": "g-67a34050f0a08191855952604cb742f7-victor-virtual-support-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Virtual Support Bot"
+  },
+  {
+    "id": 53,
+    "name": "Adam",
+    "category": "Marketing",
+    "purpose": "Enhances ad copy for clarity and impact.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a340a48708819195c65801c91f18e1-adam-ad-optimisation-bot",
+        "external_id": "g-67a340a48708819195c65801c91f18e1-adam-ad-optimisation-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Ad Optimisation Bot"
+  },
+  {
+    "id": 54,
+    "name": "Barbara",
+    "category": "Marketing",
+    "purpose": "Offers expertise in writing engaging, SEO-friendly blog content.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a340f0b95c819192c2311117191d6d-barbara-blog-writing-bot",
+        "external_id": "g-67a340f0b95c819192c2311117191d6d-barbara-blog-writing-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Blog Writing Bot"
+  },
+  {
+    "id": 55,
+    "name": "Celia",
+    "category": "Marketing",
+    "purpose": "Provides expertise in crafting effective cold emails.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a34148dee08191a2a4dfd3de54916e-celia-cold-email-bot",
+        "external_id": "g-67a34148dee08191a2a4dfd3de54916e-celia-cold-email-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Cold Email Bot"
+  },
+  {
+    "id": 56,
+    "name": "Cody",
+    "category": "Marketing",
+    "purpose": "Enhances and refines copy, providing expert guidance.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a341a6cd9081919c6fb8e0632dbe37-cody-copywriting-bot",
+        "external_id": "g-67a341a6cd9081919c6fb8e0632dbe37-cody-copywriting-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Copywriting Bot"
+  },
+  {
+    "id": 57,
+    "name": "Juno",
+    "category": "Marketing",
+    "purpose": "Assists with creating engaging email marketing content.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a342c90c0081919105a2085840c3f7-juno-email-marketing-gpt",
+        "external_id": "g-67a342c90c0081919105a2085840c3f7-juno-email-marketing-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Email Marketing GPT"
+  },
+  {
+    "id": 58,
+    "name": "Dimarko",
+    "category": "Marketing",
+    "purpose": "Guides agencies in implementing customized strategies for digital success.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a3433589988191ae7d23de32398a72-dimarko-digital-marketing-bot",
+        "external_id": "g-67a3433589988191ae7d23de32398a72-dimarko-digital-marketing-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Digital Marketing Bot"
+  },
+  {
+    "id": 59,
+    "name": "Dipedi",
+    "category": "Marketing",
+    "purpose": "Guides you through product development, providing expert advice and industry insights.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a343959ea881918e87b4e63bca3584-dipedi-digital-product-development-bot",
+        "external_id": "g-67a343959ea881918e87b4e63bca3584-dipedi-digital-product-development-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Digital Product Development Bot"
+  },
+  {
+    "id": 60,
+    "name": "Mape",
+    "category": "Marketing",
+    "purpose": "Provides expertise in detailed marketing persona development.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a343dfc94481918124245f8f163ffd-mape-marketing-persona-bot",
+        "external_id": "g-67a343dfc94481918124245f8f163ffd-mape-marketing-persona-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Marketing Persona Bot"
+  },
+  {
+    "id": 61,
+    "name": "Sebo",
+    "category": "Marketing",
+    "purpose": "Boosts your website’s performance by quickly finding the best keywords.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a34445142081919a707de2e2cb249f-sebo-seo-optimisation-bot",
+        "external_id": "g-67a34445142081919a707de2e2cb249f-sebo-seo-optimisation-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "SEO Optimisation Bot"
+  },
+  {
+    "id": 62,
+    "name": "Sophie",
+    "category": "Marketing",
+    "purpose": "Offers comprehensive competitor analysis and actionable insights.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a36ef9e9e48191acf1b970a4ffc8b0-sophie-strategic-market-bot",
+        "external_id": "g-67a36ef9e9e48191acf1b970a4ffc8b0-sophie-strategic-market-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Strategic Market Bot"
+  },
+  {
+    "id": 63,
+    "name": "Lila",
+    "category": "Marketing",
+    "purpose": "Helps manage and optimize affiliate marketing programs.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a36f43198c819183da7399c777fbc8-lila-affiliate-marketing-bot",
+        "external_id": "g-67a36f43198c819183da7399c777fbc8-lila-affiliate-marketing-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Affiliate Marketing Bot"
+  },
+  {
+    "id": 64,
+    "name": "Cena",
+    "category": "Sales and Communication",
+    "purpose": "Simulates a client avatar in sales conversations.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a36fbdd6b0819183069b7974fd60b5-cena-client-avatar-simulation-bot-for-sales",
+        "external_id": "g-67a36fbdd6b0819183069b7974fd60b5-cena-client-avatar-simulation-bot-for-sales"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Client Avatar Simulation Bot"
+  },
+  {
+    "id": 65,
+    "name": "Sienna",
+    "category": "Sales and Communication",
+    "purpose": "Assists in crafting effective digital sales strategies with actionable advice.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a37012020481919c6dbf2ccc5d10ec-sienna-strategic-sales-advisor-bot",
+        "external_id": "g-67a37012020481919c6dbf2ccc5d10ec-sienna-strategic-sales-advisor-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Strategic Sales Advisor Bot"
+  },
+  {
+    "id": 66,
+    "name": "Milo",
+    "category": "Writing",
+    "purpose": "Helps with book writing: plots, characters, themes, dialogue.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a3706c8df48191b1d3a5a198cb85bd-milo-book-writing-gpt",
+        "external_id": "g-67a3706c8df48191b1d3a5a198cb85bd-milo-book-writing-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Book writing GPT"
+  },
+  {
+    "id": 67,
+    "name": "Zoe",
+    "category": "Writing",
+    "purpose": "Creates unique characters for stories, games, and creative projects",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a370db7828819198e32ed4be235ce7-zoe-character-creator-gpt",
+        "external_id": "g-67a370db7828819198e32ed4be235ce7-zoe-character-creator-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Character creator GPT"
+  },
+  {
+    "id": 68,
+    "name": "Phoenix",
+    "category": "Writing",
+    "purpose": "Paraphrases texts for clarity and originality, tailored to various purposes.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a371439bc48191a7ee098907834031-phoenix-rewrite-gpt",
+        "external_id": "g-67a371439bc48191a7ee098907834031-phoenix-rewrite-gpt"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Rewrite GPT"
+  },
+  {
+    "id": 69,
+    "name": "Grant",
+    "category": "Writing",
+    "purpose": "Offers friendly grammar-focused English tutoring.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a3718e952081918d7d718a2aae6477-grant-grammar-bot",
+        "external_id": "g-67a3718e952081918d7d718a2aae6477-grant-grammar-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Grammar Bot"
+  },
+  {
+    "id": 70,
+    "name": "Sally",
+    "category": "Writing",
+    "purpose": "Provides creative assistance for crafting engaging short stories.",
+    "inputs": null,
+    "outputs": null,
+    "tools_integrations": [
+      {
+        "type": "chatgpt_gpt_link",
+        "value": "https://chatgpt.com/g/g-67a371ccafd881919a29ee4f0405dc30-sally-sales-story-creation-bot",
+        "external_id": "g-67a371ccafd881919a29ee4f0405dc30-sally-sales-story-creation-bot"
+      }
+    ],
+    "workflow_steps": null,
+    "constraints": null,
+    "notes": "Sales Story Creation Bot"
+  }
+]

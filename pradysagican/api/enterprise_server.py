@@ -16,6 +16,8 @@ from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import uvicorn
+from pradysagican.evaluation.framework import EvaluationCase, EvaluationFramework, EvaluationResult
+from pradysagican.observability.langfuse_adapter import LangfuseAdapter
 
 logger = logging.getLogger(__name__)
 
@@ -74,6 +76,28 @@ class RuntimeStatusResponse(BaseModel):
 
     status: str
     checks: Dict[str, bool]
+    timestamp: str
+
+
+class TraceEventResponse(BaseModel):
+    """Trace event payload returned by trace endpoints."""
+
+    request_id: str
+    status: str
+    latency_ms: float
+    tokens_used: int
+    timestamp: str
+
+
+class EvaluationSummaryResponse(BaseModel):
+    """Aggregated evaluation summary."""
+
+    total_requests_evaluated: int
+    pass_rate: float
+    avg_quality_score: float
+    avg_relevance_score: float
+    avg_coherence_score: float
+    avg_cost_usd: float
     timestamp: str
 
 
@@ -264,7 +288,11 @@ class EnterpriseAPIServer:
         self.request_tracker = RequestTracker()
         self.rate_limiter = RateLimitTracker()
         self.processor = RequestProcessor()
-        
+        self.tracer = LangfuseAdapter()
+        self.evaluator = EvaluationFramework()
+        self.trace_events: List[Dict[str, Any]] = []
+        self.evaluation_results: List[EvaluationResult] = []
+
         self._setup_middleware()
         self._setup_routes()
 
@@ -279,6 +307,36 @@ class EnterpriseAPIServer:
             "error_rate_within_slo": metrics["error_rate"] <= 0.10,
         }
         return checks
+
+    def _extract_expected_keywords(self, query: str, limit: int = 4) -> List[str]:
+        tokens = [
+            t.strip(".,!?;:()[]{}\"'").lower()
+            for t in query.split()
+            if len(t.strip(".,!?;:()[]{}\"'")) >= 4
+        ]
+        seen: List[str] = []
+        for t in tokens:
+            if t not in seen:
+                seen.append(t)
+            if len(seen) >= limit:
+                break
+        return seen
+
+    def _record_trace(self, request_id: str, status: RequestStatus, latency_ms: float, tokens_used: int) -> None:
+        event = {
+            "request_id": request_id,
+            "status": status.value,
+            "latency_ms": round(latency_ms, 3),
+            "tokens_used": int(tokens_used),
+            "timestamp": datetime.now().isoformat(),
+        }
+        self.trace_events.append(event)
+        self.tracer.trace(
+            name="enterprise_api.process",
+            input_data={"request_id": request_id},
+            output_data=event,
+            metadata={"component": "enterprise_server"},
+        )
     
     def _setup_middleware(self) -> None:
         """Setup CORS and other middleware."""
@@ -371,7 +429,31 @@ class EnterpriseAPIServer:
                 tokens_used=result["tokens_used"],
                 error=result["error"]
             )
-            
+
+            self._record_trace(
+                request_id=request_id,
+                status=result["status"],
+                latency_ms=result["processing_time_ms"],
+                tokens_used=result["tokens_used"],
+            )
+
+            evaluation_case = EvaluationCase(
+                case_id=request_id,
+                prompt=request.query,
+                expected_keywords=self._extract_expected_keywords(request.query),
+                max_latency_ms=2000.0,
+                max_cost_usd=0.02,
+            )
+            evaluation_result = self.evaluator.evaluate_case(
+                model_name="enterprise_api_default",
+                case=evaluation_case,
+                output=result["result"]["response"] if result.get("result") else "",
+                latency_ms=float(result["processing_time_ms"]),
+                token_input=max(1, len(request.query.split())),
+                token_output=max(1, int(result["tokens_used"])),
+            )
+            self.evaluation_results.append(evaluation_result)
+
             return AgentResponse(**result)
         
         @self.app.get("/metrics")
@@ -392,6 +474,60 @@ class EnterpriseAPIServer:
             """Get a test API key (dev only)."""
             key = self.api_key_manager.create_test_key()
             return {"api_key": key}
+
+        @self.app.get("/traces")
+        async def get_traces(
+            x_api_key: str = Header(None),
+            limit: int = 20,
+        ) -> Dict[str, Any]:
+            """Get recent trace events."""
+            if not x_api_key:
+                raise HTTPException(status_code=401, detail="Missing API key")
+            try:
+                self.api_key_manager.validate_key(x_api_key)
+            except AuthenticationError:
+                raise HTTPException(status_code=401, detail="Invalid API key")
+
+            sliced = self.trace_events[-max(1, min(limit, 200)) :]
+            return {
+                "total": len(self.trace_events),
+                "items": [TraceEventResponse(**e).model_dump() for e in sliced],
+            }
+
+        @self.app.get("/evaluation/summary")
+        async def evaluation_summary(x_api_key: str = Header(None)) -> EvaluationSummaryResponse:
+            """Get aggregated online evaluation summary."""
+            if not x_api_key:
+                raise HTTPException(status_code=401, detail="Missing API key")
+            try:
+                self.api_key_manager.validate_key(x_api_key)
+            except AuthenticationError:
+                raise HTTPException(status_code=401, detail="Invalid API key")
+
+            if not self.evaluation_results:
+                return EvaluationSummaryResponse(
+                    total_requests_evaluated=0,
+                    pass_rate=0.0,
+                    avg_quality_score=0.0,
+                    avg_relevance_score=0.0,
+                    avg_coherence_score=0.0,
+                    avg_cost_usd=0.0,
+                    timestamp=datetime.now().isoformat(),
+                )
+
+            report = self.evaluator.build_report(
+                model_name="enterprise_api_default",
+                results=self.evaluation_results,
+            )
+            return EvaluationSummaryResponse(
+                total_requests_evaluated=report.total_cases,
+                pass_rate=report.pass_rate,
+                avg_quality_score=report.avg_quality_score,
+                avg_relevance_score=report.avg_relevance_score,
+                avg_coherence_score=report.avg_coherence_score,
+                avg_cost_usd=report.avg_cost_usd,
+                timestamp=datetime.now().isoformat(),
+            )
     
     def get_app(self) -> FastAPI:
         """Get the FastAPI application."""

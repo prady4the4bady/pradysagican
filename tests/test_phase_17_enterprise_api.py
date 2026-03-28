@@ -278,6 +278,47 @@ class TestMetricsEndpoint:
         assert data["total_requests"] >= 1
 
 
+class TestTracingAndEvaluation:
+    """Test tracing and online evaluation endpoints."""
+
+    def test_traces_endpoint_requires_auth(self, client):
+        response = client.get("/traces")
+        assert response.status_code == 401
+
+    def test_traces_endpoint_after_request(self, client, test_api_key):
+        client.post(
+            "/process",
+            json={"query": "Explain retrieval context grounding"},
+            headers={"X-API-Key": test_api_key},
+        )
+        response = client.get("/traces", headers={"X-API-Key": test_api_key})
+        assert response.status_code == 200
+        data = response.json()
+        assert "total" in data
+        assert "items" in data
+        assert data["total"] >= 1
+        assert len(data["items"]) >= 1
+        assert "request_id" in data["items"][-1]
+
+    def test_evaluation_summary_requires_auth(self, client):
+        response = client.get("/evaluation/summary")
+        assert response.status_code == 401
+
+    def test_evaluation_summary_after_request(self, client, test_api_key):
+        client.post(
+            "/process",
+            json={"query": "How does latency impact API quality?"},
+            headers={"X-API-Key": test_api_key},
+        )
+        response = client.get("/evaluation/summary", headers={"X-API-Key": test_api_key})
+        assert response.status_code == 200
+        data = response.json()
+        assert data["total_requests_evaluated"] >= 1
+        assert 0.0 <= data["pass_rate"] <= 1.0
+        assert "avg_quality_score" in data
+        assert "avg_cost_usd" in data
+
+
 class TestTestKeyEndpoint:
     """Test test key generation endpoint."""
     

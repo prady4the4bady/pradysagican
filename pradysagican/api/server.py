@@ -451,6 +451,37 @@ async def configure_llm(req: LLMConfigRequest) -> LLMConfigResponse:
                     configured_providers=[],
                     active_provider="none"
                 )
+
+
+# ============================================================================
+# Phase A Integration Routes (ModelRouter + MCP + RAG)
+# ============================================================================
+# These routes add real-time streaming, WebSocket chat, and tool execution
+# to the existing PRADYSAGI API server.
+
+try:
+    from pradysagican.api.enhanced_routes import add_integration_routes
+    from pradysagican.core.integration import pradysagi, initialize_pradysagi
+    
+    @app.on_event("startup")
+    async def integrate_phase_a():
+        """Initialize Phase A integration components"""
+        logger.info("🔄 Initializing Phase A (ModelRouter + MCP + RAG)...")
+        try:
+            success = await initialize_pradysagi({
+                "local_models": True,
+                "mode": "hybrid"
+            })
+            if success:
+                logger.info("✅ Phase A integration ready")
+                add_integration_routes(app, pradysagi)
+            else:
+                logger.warning("⚠️ Phase A partial initialization")
+        except Exception as e:
+            logger.error(f"❌ Phase A initialization failed: {str(e)}")
+    
+except ImportError as e:
+    logger.warning(f"⚠️ Phase A integration not available: {str(e)}")
             os.environ["NVIDIA_API_KEY"] = req.api_key
             configured.append("nvidia")
             return LLMConfigResponse(

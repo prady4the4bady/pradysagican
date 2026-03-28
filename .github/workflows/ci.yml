@@ -4,10 +4,16 @@ on:
   push:
     branches: ["main", "master"]
   pull_request:
+  workflow_dispatch:
 
 jobs:
   test:
+    name: Test (py${{ matrix.python-version }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
 
     steps:
       - name: Checkout
@@ -16,19 +22,61 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python-version }}
 
       - name: Install package + test deps
         run: |
           python -m pip install --upgrade pip
           pip install -e .[dev]
+          pip install pyyaml
 
       - name: Run tests
         run: pytest -q tests
 
-      - name: Verify enterprise API startup
+      - name: Verify unified app startup
         run: |
-          python -m uvicorn pradysagican.api.enterprise_server:create_api_server --factory --host 127.0.0.1 --port 8001 &
+          python -m uvicorn pradysagican.api.app:create_unified_app --factory --host 127.0.0.1 --port 8001 &
           sleep 3
           curl -f http://127.0.0.1:8001/live
           curl -f http://127.0.0.1:8001/ready
+          curl -f http://127.0.0.1:8001/version
+
+      - name: Run release smoke validation
+        run: python scripts/smoke_validate.py
+
+  lint:
+    name: Lint (ruff)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install lint deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff
+
+      - name: Ruff check
+        run: |
+          ruff check \
+            pradysagican/api/app.py \
+            pradysagican/api/enterprise_server.py \
+            pradysagican/evaluation \
+            pradysagican/memory \
+            pradysagican/observability/langfuse_adapter.py \
+            pradysagican/observability/persistent_store.py \
+            pradysagican/tools/mcp_ecosystem.py \
+            scripts \
+            tests/test_phase_17_enterprise_api.py \
+            tests/test_phase_18_evaluation.py \
+            tests/test_phase_19_rag_memory.py \
+            tests/test_phase_20_mcp_ecosystem.py \
+            tests/test_phase_21_deployment_assets.py \
+            tests/test_phase_23_tracing_eval_integration.py \
+            tests/test_phase_24_persistence_dashboard.py \
+            tests/test_phase_25_smoke_validator.py

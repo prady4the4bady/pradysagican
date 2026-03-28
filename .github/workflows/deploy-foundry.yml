@@ -1,0 +1,39 @@
+name: Deploy to Foundry
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment"
+        required: true
+        default: "staging"
+        type: choice
+        options:
+          - staging
+          - production
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .[dev]
+
+      - name: Pre-deploy smoke validation
+        run: python scripts/smoke_validate.py
+
+      - name: Deploy placeholder
+        run: |
+          echo "Use Microsoft Foundry VS Code command:"
+          echo "azure-ai-foundry.commandPalette.deployWorkflow"
+          echo "Environment: ${{ github.event.inputs.environment }}"

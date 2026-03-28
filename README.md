@@ -36,6 +36,22 @@
 
 ---
 
+## ✅ One-command validation
+
+Run this to verify startup + core endpoints end-to-end:
+
+```bash
+python scripts/smoke_validate.py
+```
+
+Expected output:
+
+```text
+SMOKE_VALIDATE_OK
+```
+
+---
+
 ## What is PRADYSAGICAN v3?
 
 PRADYSAGICAN is a **complete superintelligent architecture** with 14 development phases implementing 23 frontier capabilities across 45+ autonomous systems.

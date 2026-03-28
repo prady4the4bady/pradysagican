@@ -12,11 +12,11 @@ import sys
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from pradysagican.core.config import PradysagiConfig, LLMProviderType
-from pradysagican.core.reasoning import TaskComplexity, ExecutionStrategy, ReasoningEngine
-from pradysagican.core.memory import MemorySystem, MemoryTier, MemoryEntry
-from pradysagican.core.safety import SafeExecutionContext, SecurityLevel, InputValidator
-from pradysagican.core.advanced import SkillLibrary, PersonalityModel, MultiAgentOrchestrator, Skill
+from pradysagican.config import PradysagiConfig, LLMProviderType
+from pradysagican.reasoning import TaskComplexity, ExecutionStrategy, ReasoningEngine
+from pradysagican.memory import MemorySystem, MemoryTier, MemoryEntry
+from pradysagican.safety import SafeExecutionContext, SecurityLevel, InputValidator
+from pradysagican.advanced import SkillLibrary, PersonalityModel, MultiAgentOrchestrator, Skill
 from pradysagican.omega import PradysagiOmega
 
 

@@ -1,0 +1,137 @@
+# CodeRabbit Configuration for PRADYSAGICAN
+# https://docs.coderabbit.ai/getting-started/configure-coderabbit
+
+version: "2"
+
+language: "en-US"
+
+tone_instructions: "Be direct and specific. Prioritize security, correctness, and maintainability. Focus on actionable improvements rather than style nitpicks."
+
+early_access: true
+
+reviews:
+  profile: "chill"
+  request_changes_workflow: false
+  high_level_summary: true
+  high_level_summary_placeholder: "@coderabbitai summary"
+  auto_title_placeholder: "@coderabbitai"
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  sequence_diagrams: true
+  changed_files_summary: true
+
+  path_filters:
+    - "!**/*.pyc"
+    - "!**/__pycache__/**"
+    - "!**/dist/**"
+    - "!**/build/**"
+    - "!**/.venv/**"
+    - "!**/node_modules/**"
+    - "!**/*.egg-info/**"
+    - "!assets/**"
+    - "!docs/**"
+
+  path_instructions:
+    - path: "pradysagican/core/**"
+      instructions: |
+        Review for:
+        - Async/await correctness and potential deadlocks
+        - Missing exception handling around LLM API calls
+        - Resource leaks (unclosed sessions, connections)
+        - Thread safety issues in shared state
+        - Hardcoded API keys or credentials
+        - Input validation before passing to external services
+
+    - path: "pradysagican/api/**"
+      instructions: |
+        Review for:
+        - Missing authentication/authorization middleware
+        - Rate limiting implementation
+        - Input sanitization and validation (Pydantic models)
+        - Proper HTTP status codes
+        - CORS configuration security
+        - SQL/NoSQL injection vectors
+        - Sensitive data exposure in responses
+
+    - path: "pradysagican/agents/**"
+      instructions: |
+        Review for:
+        - Prompt injection vulnerabilities
+        - Unbounded loops or recursion in agent workflows
+        - Missing timeout handling for agent tool calls
+        - Proper error propagation from tool failures
+
+    - path: "pradysagican/memory/**"
+      instructions: |
+        Review for:
+        - Concurrency issues in memory read/write operations
+        - Memory leaks in long-running sessions
+        - Proper serialization/deserialization of memory objects
+        - Missing TTL or eviction policies
+
+    - path: "pradysagican/providers/**"
+      instructions: |
+        Review for:
+        - Credentials never hardcoded — must use environment variables
+        - Retry logic and exponential backoff on API failures
+        - Proper handling of provider rate limits
+        - Connection pooling and reuse
+
+    - path: "pradysagican/gateway/**"
+      instructions: |
+        Review for:
+        - Request routing correctness
+        - Middleware ordering (auth before business logic)
+        - Missing request/response logging
+        - Error response format consistency
+
+    - path: "tests/**"
+      instructions: |
+        Review for:
+        - Tests that only assert True (not testing real behavior)
+        - Missing async test fixtures
+        - No mocking of external API calls (tests hitting live services)
+        - Missing edge case coverage (empty inputs, timeouts, errors)
+        - Test isolation — shared state between tests
+
+    - path: ".github/workflows/**"
+      instructions: |
+        Review for:
+        - Pinned action versions (security)
+        - Secret exposure in logs
+        - Missing test coverage requirements
+        - Proper caching of dependencies
+        - Matrix strategy for Python versions
+
+    - path: "pradysagican/config.py"
+      instructions: |
+        Review for:
+        - All secrets loaded from environment variables only
+        - Sensible defaults that don't expose dev configs in production
+        - Missing validation for required configuration values
+
+  tools:
+    ast-grep:
+      enabled: true
+    github-checks:
+      enabled: true
+      timeout_ms: 90000
+    ruff:
+      enabled: true
+    mypy:
+      enabled: true
+
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - "main"
+      - "develop"
+
+chat:
+  auto_reply: true
+
+finishing_touches:
+  docstrings:
+    enabled: true

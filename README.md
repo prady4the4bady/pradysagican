@@ -706,3 +706,5 @@ Production deployment verified • All tests passing • Ready for enterprise us
 **[GitHub](https://github.com/prady4the4bady/pradysagican) • [API Docs](http://localhost:8000/docs) • [Support](https://github.com/prady4the4bady/pradysagican/issues)**
 
 </div>
+
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/prady4the4bady/pradysagican?utm_source=oss&utm_medium=github&utm_campaign=prady4the4bady%2Fpradysagican&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
